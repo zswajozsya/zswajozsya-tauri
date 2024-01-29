@@ -10,7 +10,7 @@ import Preview from './components/Preview.vue';
 
 <template>
   <Header></Header>
-  <Splitter style="flex: auto">
+  <Splitter>
     <SplitterPanel>
       <Sidebar></Sidebar>
     </SplitterPanel>
