@@ -1,0 +1,13 @@
+body {
+  margin: 0;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+* {
+  user-select: none;
+}
