@@ -11,13 +11,13 @@ import Preview from './components/Preview.vue';
 <template>
   <Header></Header>
   <Splitter>
-    <SplitterPanel>
+    <SplitterPanel :size="20">
       <Sidebar></Sidebar>
     </SplitterPanel>
-    <SplitterPanel>
+    <SplitterPanel :size="60">
       <Main></Main>
     </SplitterPanel>
-    <SplitterPanel>
+    <SplitterPanel :size="20">
       <Preview></Preview>
     </SplitterPanel>
   </Splitter>

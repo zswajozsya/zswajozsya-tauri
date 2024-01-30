@@ -18,8 +18,11 @@ watch(pageStack, async (newStack, _oldStack) => {
 <template>
   <div class="root">
     <div v-if="pageStack.stack === null">Loading...</div>
-    <div v-else v-for="entry in dirEntries" >
-      <div>{{ entry.file_name }}</div>
+    <div v-else v-for="entry in dirEntries" class="entry">
+      <span class="material-symbols-outlined">
+        {{ entry.file_type === 'Dir' || entry.file_type === 'SymlinkDir' ? 'folder' : 'draft' }}
+      </span>
+      <span>{{ entry.file_name }}</span>
     </div>
   </div>
 </template>
@@ -28,5 +31,14 @@ watch(pageStack, async (newStack, _oldStack) => {
 .root {
   height: calc(100vh - 20px);
   overflow: scroll;
+}
+
+.entry {
+  display: flex;
+  align-items: center;
+
+  span {
+    text-wrap: nowrap;
+  }
 }
 </style>
