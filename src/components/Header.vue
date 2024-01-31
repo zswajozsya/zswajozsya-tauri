@@ -1,36 +1,38 @@
 <script setup lang="ts">
-import { useUrlStore } from "../stores/index.ts";
+import { usePathStore } from "../stores/index.ts";
 import Button from "primevue/button";
 import Breadcrumb from "primevue/breadcrumb";
+import { stringifyPath } from "../utils";
 
-const urlStore = useUrlStore();
-urlStore.init();
+const pathStore = usePathStore();
+pathStore.init();
 </script>
 
 <template>
   <div class="root">
     <Button
-      text rounded
+      text
+      rounded
       class="go_up"
       aria-label="Go up"
-      :disabled="urlStore.value === null || urlStore.value.length === 1"
-      @click="urlStore.value!.pop()"
+      :disabled="pathStore.path === null || pathStore.path.length === 1"
+      @click="pathStore.goUp()"
     >
       <span class="material-symbols-outlined">arrow_upward</span>
     </Button>
-    <div v-if="urlStore.value === null">Loading...</div>
+    <div v-if="pathStore.path === null">Loading...</div>
     <div v-else>
       <Breadcrumb
         :home="{
           label: 'C:',
-          command: () => urlStore.value = [urlStore.value![0]]
+          command: () => pathStore.goTo(stringifyPath(pathStore.path!.slice(0, 1)))
         }"
-        :model="urlStore
-          .value!
-          .slice(1, urlStore.value.length)
+        :model="pathStore
+          .path!
+          .slice(1, pathStore.path.length)
           .map((p, i) => ({
             label: p,
-            command: () => urlStore.value = urlStore.value!.slice(0, i + 2)
+            command: () => pathStore.goTo(stringifyPath(pathStore.path!.slice(0, i + 2)))
           }))"
       >
       </Breadcrumb>

@@ -7,3 +7,11 @@ export function parsePath(path: string): string[] {
         return path.split('\\')
     }
 }
+
+export function stringifyPath(path: string[]): string {
+    return path[0] === '/' ?
+        // Unix
+        `/${path.slice(1, path.length).join('/')}` :
+        // Windows
+        path.join('\\');
+}

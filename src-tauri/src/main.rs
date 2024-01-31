@@ -12,11 +12,11 @@ fn get_home_dir() -> PathBuf {
 }
 
 #[tauri::command]
-fn read_dir(path: &str) -> Vec<DirEntry> {
-    std::fs::read_dir(path)
-        .unwrap()
-        .map(|e| e.unwrap().into())
-        .collect()
+fn read_dir(path: &str) -> Result<Vec<DirEntry>, String> {
+    match std::fs::read_dir(path) {
+        Ok(read_dir) => Ok(read_dir.map(|e| e.unwrap().into()).collect()),
+        Err(err) => Err(err.to_string()),
+    }
 }
 
 #[derive(Serialize)]
