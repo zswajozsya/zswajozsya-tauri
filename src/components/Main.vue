@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { usePageStackStore } from '../stores/index.ts'
+import { useUrlStore } from '../stores/index.ts'
 import { readDir } from '../tauri';
 import { ref, watch } from 'vue';
 import { DirEntry } from '../types';
@@ -7,16 +7,15 @@ import { DirEntry } from '../types';
 const DOUBLE_CLICK_INTERVAL = 500;
 let doubleClickTimeoutId: number | undefined = undefined;
 
-const pageStack = usePageStackStore();
+const urlStore = useUrlStore();
 const dirEntries = ref<{
   selected: boolean,
   entry: DirEntry
 }[]>([]);
 
-watch(pageStack, async (newStack, _oldStack) => {
-  if (newStack.stack !== null) {
-    const lastPage = newStack.stack[newStack.stack.length - 1];
-    const res = await readDir(lastPage);
+watch(urlStore, async (newUrl, _oldUrl) => {
+  if (newUrl.value !== null) {
+    const res = await readDir(newUrl.pathString!);
     dirEntries.value = res.sort((a, b) => {
       const a_is_dir = a.file_type == 'Dir' || a.file_type == 'SymlinkDir';
       const b_is_dir = b.file_type == 'Dir' || b.file_type == 'SymlinkDir';
@@ -37,10 +36,9 @@ const justClickedEntry = ref<string | null>(null);
 
 function handleEntryDoubleClick(entry: DirEntry) {
   if (entry.file_type === 'Dir' || entry.file_type === 'SymlinkDir') {
-    const currentPath = pageStack.stack![pageStack.stack!.length - 1];
-    pageStack.stack!.push(`${currentPath}/${entry.file_name}`)
+    urlStore.value!.push(entry.file_name)
   } else {
-    // TODO
+    // TODO: Open the file
     console.log(entry.file_name)
   }
 }
@@ -68,7 +66,7 @@ const handleClickEntry = (item: {
 
 <template>
   <div class="root">
-    <div v-if="pageStack.stack === null">Loading...</div>
+    <div v-if="urlStore.value === null">Loading...</div>
     <div v-else v-for="item in dirEntries" :class="`entry ${item.selected ? 'selected' : 'unselected'}`"
       @click="handleClickEntry(item)">
       <span class="material-symbols-outlined">
