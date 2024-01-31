@@ -30,12 +30,12 @@ export const useUrlStore = defineStore('page_stack', {
             }
             return state.value[0] === '/'
         },
-        pathString: (state) => {
+        path: (state) => {
             if (state.value === null) return null;
             if (state.value[0] === '/') {
                 return `/${state.value.slice(1, state.value.length).join('/')}`
             } else {
-                return `${state.value[0]}:\\${state.value.slice(1, state.value.length).join('\\')}`
+                return state.value.join('\\')
             }
         }
     }

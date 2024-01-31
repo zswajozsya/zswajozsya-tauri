@@ -15,7 +15,7 @@ const dirEntries = ref<{
 
 watch(urlStore, async (newUrl, _oldUrl) => {
   if (newUrl.value !== null) {
-    const res = await readDir(newUrl.pathString!);
+    const res = await readDir(newUrl.path!);
     dirEntries.value = res.sort((a, b) => {
       const a_is_dir = a.file_type == 'Dir' || a.file_type == 'SymlinkDir';
       const b_is_dir = b.file_type == 'Dir' || b.file_type == 'SymlinkDir';
