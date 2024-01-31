@@ -10,6 +10,9 @@ urlStore.init();
 <template>
   <div class="root">
     <Button
+      text rounded
+      class="go_up"
+      aria-label="Go up"
       :disabled="urlStore.value === null || urlStore.value.length === 1"
       @click="urlStore.value!.pop()"
     >
@@ -39,5 +42,12 @@ urlStore.init();
 .root {
   display: flex;
   align-items: center;
+  padding: 0 6px;
+
+  .go_up {
+    width: 42px;
+    display: flex;
+    justify-content: center;
+  }
 }
 </style>
