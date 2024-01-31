@@ -79,8 +79,9 @@ const handleClickEntry = (item: {
 
 <style scoped>
 .root {
-  height: calc(100vh - 20px);
-  overflow: scroll;
+  height: calc(100vh - 60px);
+  overflow-y: scroll;
+  overflow-x: auto;
 }
 
 .entry {
