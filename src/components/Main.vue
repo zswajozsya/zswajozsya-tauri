@@ -2,7 +2,7 @@
 import { usePathStore } from "../stores/index.ts";
 import { ref } from "vue";
 import { DirEntry } from "../types";
-import { stringifyPath } from "../utils";
+import { stringifyPath, stringifySize } from "../utils";
 
 const DOUBLE_CLICK_INTERVAL = 500;
 let doubleClickTimeoutId: number | undefined = undefined;
@@ -42,21 +42,30 @@ const handleClickEntry = (item: { selected: boolean; entry: DirEntry }) => {
 <template>
   <div class="root">
     <div v-if="pathStore.path === null">Loading...</div>
-    <div
-      v-else
-      v-for="item in pathStore.entries"
-      :class="`entry ${item.selected ? 'selected' : 'unselected'}`"
-      @click="handleClickEntry(item)"
-    >
-      <span class="material-symbols-outlined">
-        {{
-          item.entry.file_type === "Dir" ||
-          item.entry.file_type === "SymlinkDir"
-            ? "folder"
-            : "draft"
-        }}
-      </span>
-      <span>{{ item.entry.file_name }}</span>
+    <div v-else class="list">
+      <div
+        v-for="item in pathStore.entries"
+        :class="`entry ${item.selected ? 'selected' : 'unselected'}`"
+        @click="handleClickEntry(item)"
+      >
+        <span class="icon material-symbols-outlined">
+          {{
+            item.entry.file_type === "Dir" ||
+            item.entry.file_type === "SymlinkDir"
+              ? "folder"
+              : "draft"
+          }}
+        </span>
+        <span class="name">{{ item.entry.file_name }}</span>
+        <span
+          class="size"
+          v-text="stringifySize(item.entry.size)"
+          v-if="
+            item.entry.file_type !== 'Dir' &&
+            item.entry.file_type !== 'SymlinkDir'
+          "
+        ></span>
+      </div>
     </div>
   </div>
 </template>
@@ -65,19 +74,35 @@ const handleClickEntry = (item: { selected: boolean; entry: DirEntry }) => {
 .root {
   height: calc(100vh - 60px);
   overflow-y: scroll;
-  overflow-x: auto;
+  overflow-x: hidden;
 }
 
 .entry {
   display: flex;
   align-items: center;
+  padding: 4px 8px;
+  --size-width: 80px;
 
-  span {
+  .icon {
+    margin-right: 4px;
+  }
+
+  .name {
     text-wrap: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+  }
+
+  .size {
+    width: var(--size-width);
+    text-wrap: nowrap;
+    text-align: right;
   }
 
   &.selected {
-    background-color: aqua;
+    color: var(--highlight-text-color);
+    background-color: var(--highlight-bg);
   }
 }
 </style>

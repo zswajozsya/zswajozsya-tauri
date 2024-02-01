@@ -15,3 +15,15 @@ export function stringifyPath(path: string[]): string {
         // Windows
         path.join('\\');
 }
+
+export function stringifySize(size: number): string {
+    if (size < 10000) {
+        return `${size} B`;
+    }
+    const kb = size >> 10;
+    if (kb < 10000) {
+        return `${kb} KB`
+    }
+    const mb = size >> 20;
+    return `${mb} MB`
+}

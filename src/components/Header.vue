@@ -24,7 +24,7 @@ pathStore.init();
     <div v-else>
       <Breadcrumb
         :home="{
-          label: 'C:',
+          label: pathStore.path![0],
           command: () => pathStore.goTo(stringifyPath(pathStore.path!.slice(0, 1)))
         }"
         :model="pathStore
