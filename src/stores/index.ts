@@ -1,28 +1,31 @@
 import { defineStore } from "pinia";
-import { getHomeDir, readDir } from "../tauri";
-import { DirEntry } from "../types";
+import { ReadDirRes, getHomeDir, readDir } from "../tauri";
+import { DirEntry, Zswajozsya } from "../types";
 import { parsePath, stringifyPath } from "../utils";
 import { message } from "@tauri-apps/api/dialog";
 
 type State =
   | {
-      path: null;
-      entries: null;
-    }
+    path: null;
+    entries: null;
+    zswajozsya: null;
+  }
   | {
-      path: string[];
-      entries: {
-        selected: boolean;
-        entry: DirEntry;
-      }[];
-    };
+    path: string[];
+    entries: {
+      selected: boolean;
+      entry: DirEntry;
+    }[];
+    zswajozsya: null | Zswajozsya,
+  };
 
 export const usePathStore = defineStore("path", {
   state: () => {
     return {
       path: null,
       entries: null,
-    } as State;
+      zswajozsya: null
+    } satisfies State as State;
   },
   actions: {
     async init() {
@@ -32,15 +35,18 @@ export const usePathStore = defineStore("path", {
       }
       this.path = parsePath(initialPage);
 
-      const entries = await readDir(initialPage);
-      const entries2 = entries.match(
+      const res = await readDir(initialPage);
+      const res2: ReadDirRes = res.match(
         (ok) => ok,
         (err) => {
           message(err, { type: "error" });
-          return [] as DirEntry[];
+          return {
+            entries: [],
+            zswajozsya: null,
+          };
         }
       );
-      this.entries = entries2
+      this.entries = res2.entries
         .sort((a, b) => {
           const a_is_dir = a.file_type == "Dir" || a.file_type == "SymlinkDir";
           const b_is_dir = b.file_type == "Dir" || b.file_type == "SymlinkDir";
@@ -55,6 +61,7 @@ export const usePathStore = defineStore("path", {
           selected: false,
           entry: e,
         }));
+        this.zswajozsya = res2.zswajozsya;
     },
 
     async goTo(url: string) {
@@ -63,6 +70,7 @@ export const usePathStore = defineStore("path", {
         (ok) => {
           this.path = parsePath(url);
           this.entries = ok
+            .entries
             .sort((a, b) => {
               const a_is_dir =
                 a.file_type == "Dir" || a.file_type == "SymlinkDir";
@@ -79,6 +87,7 @@ export const usePathStore = defineStore("path", {
               selected: false,
               entry: e,
             }));
+          this.zswajozsya = ok.zswajozsya;
         },
         (err) => message(err, { type: "error" })
       );

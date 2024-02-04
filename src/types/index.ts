@@ -5,3 +5,11 @@ export type DirEntry = {
     created: number,
     modified: number,
 }
+
+export type Zswajozsya = {
+    files: {
+        filename: string,
+        labels: number[],
+    }[],
+    label: unknown[],
+}

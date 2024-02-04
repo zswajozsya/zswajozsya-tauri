@@ -130,6 +130,9 @@ name = "bitflags"
 version = "2.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ed570934406eb16438a4e976b1b4500774099c13b8cb96eec99f620f05090ddf"
+dependencies = [
+ "serde",
+]
 
 [[package]]
 name = "block"
@@ -2190,6 +2193,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "ron"
+version = "0.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b91f7eff05f748767f183df4320a63d6936e9c6107d97c9e6bdd9784f4289c94"
+dependencies = [
+ "base64 0.21.7",
+ "bitflags 2.4.2",
+ "serde",
+ "serde_derive",
+]
+
+[[package]]
 name = "rustc-demangle"
 version = "0.1.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3827,6 +3842,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "zswajozsya"
+version = "0.1.0"
+source = "git+https://github.com/zswajozsya/zswajozsya.git?rev=171ff53fb3f8e71a024c6b837db71b28ec0c74db#171ff53fb3f8e71a024c6b837db71b28ec0c74db"
+dependencies = [
+ "ron",
+ "serde",
+]
+
+[[package]]
 name = "zswajozsya-tauri"
 version = "0.0.0"
 dependencies = [
@@ -3835,4 +3859,5 @@ dependencies = [
  "serde_json",
  "tauri",
  "tauri-build",
+ "zswajozsya",
 ]

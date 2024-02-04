@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import Toolbar from "primevue/toolbar";
 import Button from "primevue/button";
+import { usePathStore } from "../stores";
+import { initDir} from '../tauri';
+
+const pathStore = usePathStore();
 </script>
 
 <template>
@@ -11,6 +15,8 @@ import Button from "primevue/button";
         rounded
         aria-label="Initialize Directory"
         title="Initialize Directory"
+        :disabled="pathStore.zswajozsya !== null"
+        @click="initDir(pathStore.pathString!)"
       >
         <span class="material-symbols-outlined">enable</span>
       </Button>
