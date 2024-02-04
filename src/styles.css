@@ -30,7 +30,7 @@ body {
 
 #app {
   display: grid;
-  grid-template-rows: 60px calc(100vh - 60px);
+  grid-template-rows: 48px 48px calc(100vh - 96px);
   grid-template-columns: 100vw;
   height: 100vh;
 }

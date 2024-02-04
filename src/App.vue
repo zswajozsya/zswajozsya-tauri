@@ -2,6 +2,7 @@
 import Splitter from 'primevue/splitter';
 import SplitterPanel from 'primevue/splitterpanel';
 import Header from './components/Header.vue';
+import Toolbar from './components/Toolbar.vue';
 import Sidebar from './components/Sidebar.vue';
 import Main from './components/Main.vue';
 import Preview from './components/Preview.vue';
@@ -10,6 +11,7 @@ import Preview from './components/Preview.vue';
 
 <template>
   <Header></Header>
+  <Toolbar></Toolbar>
   <Splitter>
     <SplitterPanel :size="20">
       <Sidebar></Sidebar>

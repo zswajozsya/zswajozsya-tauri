@@ -79,7 +79,7 @@ const handleClickEntry = (item: { selected: boolean; entry: DirEntry }) => {
 
 <style scoped>
 .root {
-  height: calc(100vh - 60px);
+  height: calc(100vh - 96px);
   overflow-y: scroll;
   overflow-x: hidden;
 }
