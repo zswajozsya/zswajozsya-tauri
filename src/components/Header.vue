@@ -20,6 +20,16 @@ pathStore.init();
     >
       <span class="material-symbols-outlined">arrow_upward</span>
     </Button>
+    <Button
+      text
+      rounded
+      class="refresh"
+      aria-label="Refresh"
+      :disabled="pathStore.path === null"
+      @click="pathStore.goTo(pathStore.pathString!)"
+    >
+      <span class="material-symbols-outlined">refresh</span>
+    </Button>
     <div v-if="pathStore.path === null">Loading...</div>
     <div v-else>
       <Breadcrumb
@@ -46,7 +56,7 @@ pathStore.init();
   align-items: center;
   padding: 0 6px;
 
-  .go_up {
+  .go_up, .refresh {
     width: 42px;
     display: flex;
     justify-content: center;
