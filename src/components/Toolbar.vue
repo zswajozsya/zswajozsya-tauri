@@ -2,7 +2,7 @@
 import Toolbar from "primevue/toolbar";
 import Button from "primevue/button";
 import { usePathStore } from "../stores";
-import { initDir} from '../tauri';
+import { initDir } from "../tauri";
 
 const pathStore = usePathStore();
 </script>
@@ -11,8 +11,7 @@ const pathStore = usePathStore();
   <Toolbar class="toolbar">
     <template #start>
       <Button
-        text
-        rounded
+        :text="pathStore.zswajozsya !== null"
         aria-label="Initialize Directory"
         title="Initialize Directory"
         :disabled="pathStore.zswajozsya !== null"
@@ -28,8 +27,8 @@ const pathStore = usePathStore();
 .toolbar {
   padding: 0 6px;
   button {
-    width: 42px;
-    height: 42px;
+    width: 36px;
+    height: 36px;
     display: flex;
     justify-content: center;
   }
