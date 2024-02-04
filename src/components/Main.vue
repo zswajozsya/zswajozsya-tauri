@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { usePathStore } from "../stores/index.ts";
 import { ref } from "vue";
+import Tag from "primevue/tag";
 import { DirEntry } from "../types";
 import { stringifyPath, stringifySize } from "../utils";
 
@@ -48,23 +49,29 @@ const handleClickEntry = (item: { selected: boolean; entry: DirEntry }) => {
         :class="`entry ${item.selected ? 'selected' : 'unselected'}`"
         @click="handleClickEntry(item)"
       >
-        <span class="icon material-symbols-outlined">
-          {{
-            item.entry.file_type === "Dir" ||
-            item.entry.file_type === "SymlinkDir"
-              ? "folder"
-              : "draft"
-          }}
-        </span>
-        <span class="name">{{ item.entry.file_name }}</span>
-        <span
-          class="size"
-          v-text="stringifySize(item.entry.size)"
-          v-if="
-            item.entry.file_type !== 'Dir' &&
-            item.entry.file_type !== 'SymlinkDir'
-          "
-        ></span>
+        <div class="line1">
+          <span class="icon material-symbols-outlined">
+            {{
+              item.entry.file_type === "Dir" ||
+              item.entry.file_type === "SymlinkDir"
+                ? "folder"
+                : "draft"
+            }}
+          </span>
+          <span class="name">{{ item.entry.file_name }}</span>
+          <span
+            class="size"
+            v-text="stringifySize(item.entry.size)"
+            v-if="
+              item.entry.file_type !== 'Dir' &&
+              item.entry.file_type !== 'SymlinkDir'
+            "
+          ></span>
+        </div>
+        <div class="line2">
+          <Tag value="asdqwe"></Tag>
+          <Tag value="qwe"></Tag>
+        </div>
       </div>
     </div>
   </div>
@@ -78,26 +85,36 @@ const handleClickEntry = (item: { selected: boolean; entry: DirEntry }) => {
 }
 
 .entry {
+  padding: 6px 8px;
   display: flex;
-  align-items: center;
-  padding: 4px 8px;
-  --size-width: 80px;
+  flex-direction: column;
+  row-gap: 2px;
+  
+  .line1 {
+    display: flex;
+    align-items: center;
+    --size-width: 80px;
+    .icon {
+      margin-right: 4px;
+    }
 
-  .icon {
-    margin-right: 4px;
+    .name {
+      text-wrap: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+    }
+
+    .size {
+      width: var(--size-width);
+      text-wrap: nowrap;
+      text-align: right;
+    }
   }
 
-  .name {
-    text-wrap: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    width: 100%;
-  }
-
-  .size {
-    width: var(--size-width);
-    text-wrap: nowrap;
-    text-align: right;
+  .line2 {
+    display: flex;
+    column-gap: 8px;
   }
 
   &.selected {
