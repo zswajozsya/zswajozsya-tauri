@@ -17,7 +17,7 @@ tauri = { version = "1.5", features = [ "dialog-message", "fs-all", "shell-open"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 home = "0.5.9"
-zswajozsya = { git = "https://github.com/zswajozsya/zswajozsya.git", rev = "171ff53fb3f8e71a024c6b837db71b28ec0c74db" }
+zswajozsya = { git = "https://github.com/zswajozsya/zswajozsya.git", rev = "a13e55c31abaf61e39a9ae419a88e8412826fd04" }
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem
