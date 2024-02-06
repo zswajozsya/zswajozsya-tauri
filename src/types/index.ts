@@ -9,7 +9,17 @@ export type DirEntry = {
 export type Zswajozsya = {
     files: {
         filename: string,
-        labels: number[],
+        labels: boolean[][],
     }[],
-    label: unknown[],
+    labels: Label[],
+}
+
+export type Label = {
+    name: string,
+    desc: string,
+    color: unknown,
+    options: {
+        name: string,
+        desc: string,
+    }[],
 }
