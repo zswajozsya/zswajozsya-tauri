@@ -6,7 +6,7 @@ import InputText from "primevue/inputtext";
 import Textarea from "primevue/textarea";
 import ColorPicker from "./ColorPicker.vue";
 
-import { usePathStore } from "../stores";
+import { usePathStore } from "../stores/path";
 import { useDialogStore } from "../stores/dialog";
 import { reactive, ref, watch } from "vue";
 import { Label } from "../types";

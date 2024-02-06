@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { usePathStore } from "../stores/index.ts";
+import { usePathStore } from "../stores/path";
 import { ref } from "vue";
 import Tag from "primevue/tag";
 import { DirEntry } from "../types";

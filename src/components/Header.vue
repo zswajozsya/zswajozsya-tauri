@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { usePathStore } from "../stores/index.ts";
+import { usePathStore } from "../stores/path";
 import Button from "primevue/button";
 import Breadcrumb from "primevue/breadcrumb";
 import { stringifyPath } from "../utils";

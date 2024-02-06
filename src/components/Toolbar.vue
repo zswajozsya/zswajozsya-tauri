@@ -2,7 +2,7 @@
 import Toolbar from "primevue/toolbar";
 import Button from "primevue/button";
 
-import { usePathStore } from "../stores";
+import { usePathStore } from "../stores/path";
 import { useDialogStore } from "../stores/dialog";
 import { initDir } from "../tauri";
 import DirectoryLabelEditor from "./DirectoryLabelEditor.vue";
