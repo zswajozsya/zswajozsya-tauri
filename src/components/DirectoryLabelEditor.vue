@@ -16,13 +16,12 @@ import { message } from "@tauri-apps/api/dialog";
 const pathStore = usePathStore();
 const dialogStore = useDialogStore();
 
-const files = ref<
+let files:
   | {
       filename: string;
       labels: boolean[][];
     }[]
-  | null
->(null);
+  | null = null;
 const labels = reactive<{ value: Label[] | null }>({ value: null });
 const selectedLabel = ref<{
   name: string;
@@ -36,7 +35,7 @@ const selectedOption = ref<{
 watch(pathStore, (newState) => {
   if (newState.zswajozsya === null) return;
   labels.value = newState.zswajozsya.labels;
-  files.value = newState.zswajozsya.files;
+  files = newState.zswajozsya.files;
 });
 
 watch(selectedLabel, () => {
@@ -47,6 +46,9 @@ const removeLabel = () => {
   const index = selectedLabel.value!.id;
   selectedLabel.value = null;
   labels.value!.splice(index, 1);
+  for (let i = 0; i < files!.length; i += 1) {
+    files![i].labels.splice(index, 1);
+  }
 };
 
 const removeOption = () => {
@@ -54,30 +56,35 @@ const removeOption = () => {
   const optionIndex = selectedOption.value!.id;
   selectedOption.value = null;
   labels.value![labelIndex].options.splice(optionIndex, 1);
+  for (let i = 0; i < files!.length; i += 1) {
+    files![i].labels[labelIndex].splice(optionIndex, 1);
+  }
 };
 
 const applyLabelChanges = async () => {
-  pathStore.zswajozsya!.files = files.value!;
+  pathStore.zswajozsya!.files = files!;
   pathStore.zswajozsya!.labels = labels.value!;
   const res = await setDir(pathStore.pathString!, {
-    files: files.value!,
+    files: files!,
     labels: labels.value!,
   });
   res.match(
     (_) => {},
-    (err) => message(err, {
-      title: 'Error when applying label changes',
-      type: 'error'
-    })
+    (err) =>
+      message(err, {
+        title: "Error when applying label changes",
+        type: "error",
+      })
   );
 };
 </script>
 
 <template>
   <Dialog
+    v-if="pathStore.path !== null"
     v-model:visible="dialogStore.isDirectoryLabelEditorVisible"
     modal
-    :header="`📁 ${pathStore.path![pathStore.path!.length - 1]}`"
+    :header="`📁 ${pathStore.path[pathStore.path.length - 1]}`"
     style="height: 433px; width: 664px"
     class="dialog"
     @hide="applyLabelChanges"
