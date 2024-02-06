@@ -17,7 +17,7 @@ export type Zswajozsya = {
 export type Label = {
     name: string,
     desc: string,
-    color: unknown,
+    color: string,
     options: {
         name: string,
         desc: string,

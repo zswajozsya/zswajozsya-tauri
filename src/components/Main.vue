@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { usePathStore } from "../stores/path";
 import { ref } from "vue";
-import Tag from "primevue/tag";
+import Labels from "./Labels.vue";
 import { DirEntry } from "../types";
 import { stringifyPath, stringifySize } from "../utils";
 
@@ -17,7 +17,7 @@ function handleEntryDoubleClick(entry: DirEntry) {
     const newPath = [...pathStore.path!, entry.file_name];
     pathStore.goTo(stringifyPath(newPath));
   } else {
-    console.warn('TODO: Open the file', entry.file_name);
+    console.warn("TODO: Open the file", entry.file_name);
   }
 }
 
@@ -45,14 +45,15 @@ const handleClickEntry = (entry: DirEntry) => {
     <div v-else class="list">
       <div
         v-for="entry in pathStore.entries"
-        :class="`entry ${pathStore.selected_entry === entry.file_name ? 'selected' : ''}`"
+        :class="`entry ${
+          pathStore.selected_entry === entry.file_name ? 'selected' : ''
+        }`"
         @click="handleClickEntry(entry)"
       >
         <div class="line1">
           <span class="icon material-symbols-outlined">
             {{
-              entry.file_type === "Dir" ||
-              entry.file_type === "SymlinkDir"
+              entry.file_type === "Dir" || entry.file_type === "SymlinkDir"
                 ? "folder"
                 : "draft"
             }}
@@ -61,15 +62,11 @@ const handleClickEntry = (entry: DirEntry) => {
           <span
             class="size"
             v-text="stringifySize(entry.size)"
-            v-if="
-              entry.file_type !== 'Dir' &&
-              entry.file_type !== 'SymlinkDir'
-            "
+            v-if="entry.file_type !== 'Dir' && entry.file_type !== 'SymlinkDir'"
           ></span>
         </div>
         <div class="line2">
-          <Tag value="asdqwe"></Tag>
-          <Tag value="qwe"></Tag>
+          <Labels :labels="pathStore.zswajozsya?.files.find((file) => file.filename === entry.file_name)?.labels"></Labels>
         </div>
       </div>
     </div>
@@ -88,7 +85,7 @@ const handleClickEntry = (entry: DirEntry) => {
   display: flex;
   flex-direction: column;
   row-gap: 2px;
-  
+
   .line1 {
     display: flex;
     align-items: center;

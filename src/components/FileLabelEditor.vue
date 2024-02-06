@@ -24,7 +24,8 @@ const selectedOptions = reactive<{
 
 // Update options when selected label changes
 watch(selectedLabel, (newState) => {
-  const labelOptions = pathStore.zswajozsya!.labels[newState!.index].options;
+  if (newState === null) return;
+  const labelOptions = pathStore.zswajozsya!.labels[newState.index].options;
   let entryIndex = pathStore.zswajozsya!.files.findIndex(
     (entry) => entry.filename === pathStore.selected_entry
   );
@@ -41,7 +42,7 @@ watch(selectedLabel, (newState) => {
   }
 
   const fileLabelOptions =
-    pathStore.zswajozsya!.files[entryIndex].labels[newState!.index];
+    pathStore.zswajozsya!.files[entryIndex].labels[newState.index];
   selectedOptions.value = labelOptions
     .map((labelOption, index) => ({
       name: labelOption.name,
@@ -65,7 +66,7 @@ watch(selectedOptions, async (newState) => {
   for (let i = 0; i < newState.value.length; i += 1) {
     newOptions[newState.value[i].index] = true;
   }
-  
+
   // Save new options
   pathStore.zswajozsya!.files[entryIndex].labels[selectedLabel.value!.index] =
     newOptions;
@@ -103,7 +104,7 @@ watch(selectedOptions, async (newState) => {
         option-label="name"
         placeholder="Select a label"
       />
-      <MultiSelect v-if="selectedLabel === null" placeholder="Select options" />
+      <MultiSelect v-if="selectedLabel === null" placeholder="Select options" disabled />
       <MultiSelect
         v-else
         :options="pathStore
@@ -117,6 +118,7 @@ watch(selectedOptions, async (newState) => {
         option-label="name"
         v-model="selectedOptions.value"
         placeholder="Select options"
+        filter
       />
     </div>
   </Dialog>
