@@ -3844,7 +3844,7 @@ dependencies = [
 [[package]]
 name = "zswajozsya"
 version = "0.1.0"
-source = "git+https://github.com/zswajozsya/zswajozsya.git?rev=d9d4bb28197a4ced5d1de534bdc699cd990b2f92#d9d4bb28197a4ced5d1de534bdc699cd990b2f92"
+source = "git+https://github.com/zswajozsya/zswajozsya.git?rev=8c3ac5e4567ba58e3d51a865c7575da6c1cda1bf#8c3ac5e4567ba58e3d51a865c7575da6c1cda1bf"
 dependencies = [
  "ron",
  "serde",

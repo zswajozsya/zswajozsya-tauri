@@ -50,9 +50,22 @@ fn init_dir(path: &str) {
     zswajozsya::init(path).unwrap();
 }
 
+#[tauri::command]
+fn set_dir(path: &str, dir: Directory) -> Result<(), String> {
+    match zswajozsya::set(path, dir) {
+        Ok(_) => Ok(()),
+        Err(err) => Err(err.to_string()),
+    }
+}
+
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![get_home_dir, read_dir, init_dir])
+        .invoke_handler(tauri::generate_handler![
+            get_home_dir,
+            read_dir,
+            init_dir,
+            set_dir
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

@@ -23,3 +23,13 @@ export async function readDir(path: string): Promise<Result<ReadDirRes, string>>
 export async function initDir(path: string) {
     return invoke('init_dir', { path }) as Promise<void>;
 }
+
+export async function setDir(path: string, dir: Zswajozsya): Promise<Result<void, string>> {
+    try {
+        await invoke('set_dir', { path, dir });
+        return Result.ok(undefined);
+    } catch (err) {
+        return Result.err(err as string)
+    }
+}
+

@@ -10,6 +10,8 @@ import { usePathStore } from "../stores/path";
 import { useDialogStore } from "../stores/dialog";
 import { reactive, ref, watch } from "vue";
 import { Label } from "../types";
+import { setDir } from "../tauri";
+import { message } from "@tauri-apps/api/dialog";
 
 const pathStore = usePathStore();
 const dialogStore = useDialogStore();
@@ -53,6 +55,22 @@ const removeOption = () => {
   selectedOption.value = null;
   labels.value![labelIndex].options.splice(optionIndex, 1);
 };
+
+const applyLabelChanges = async () => {
+  pathStore.zswajozsya!.files = files.value!;
+  pathStore.zswajozsya!.labels = labels.value!;
+  const res = await setDir(pathStore.pathString!, {
+    files: files.value!,
+    labels: labels.value!,
+  });
+  res.match(
+    (_) => {},
+    (err) => message(err, {
+      title: 'Error when applying label changes',
+      type: 'error'
+    })
+  );
+};
 </script>
 
 <template>
@@ -62,7 +80,7 @@ const removeOption = () => {
     header="Label Editor"
     style="height: 433px; width: 664px"
     class="dialog"
-    @hide="console.warn('TODO: save')"
+    @hide="applyLabelChanges"
   >
     <div class="dialog">
       <div class="labels">
