@@ -77,7 +77,7 @@ const applyLabelChanges = async () => {
   <Dialog
     v-model:visible="dialogStore.isDirectoryLabelEditorVisible"
     modal
-    header="Label Editor"
+    :header="`📁 ${pathStore.path![pathStore.path!.length - 1]}`"
     style="height: 433px; width: 664px"
     class="dialog"
     @hide="applyLabelChanges"

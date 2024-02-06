@@ -86,7 +86,7 @@ watch(selectedOptions, async (newState) => {
   <Dialog
     v-model:visible="dialogStore.isFileLabelEditorVisible"
     modal
-    header="Label Editor"
+    :header="pathStore.selected_entry!"
     style="height: 200px; width: 400px"
     class="dialog"
     @hide="selectedLabel = null"
