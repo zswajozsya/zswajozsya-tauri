@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import Toolbar from "primevue/toolbar";
 import Button from "primevue/button";
+import Divider from "primevue/divider";
 
 import { usePathStore } from "../stores/path";
 import { useDialogStore } from "../stores/dialog";
 import { initDir } from "../tauri";
 import DirectoryLabelEditor from "./DirectoryLabelEditor.vue";
+import FileLabelEditor from "./FileLabelEditor.vue";
 
 const pathStore = usePathStore();
 const dialogStore = useDialogStore();
@@ -14,7 +16,7 @@ const dialogStore = useDialogStore();
 <template>
   <Toolbar class="toolbar">
     <template #start>
-      <div class="start">
+      <div class="group_1">
         <Button
           :text="pathStore.zswajozsya !== null"
           aria-label="Initialize Directory"
@@ -32,20 +34,32 @@ const dialogStore = useDialogStore();
           <span class="material-symbols-outlined">edit_note</span>
         </Button>
       </div>
+      <Divider layout="vertical" />
+      <div class="group_2">
+        <Button
+          text
+          :disabled="pathStore.zswajozsya === null"
+          @click="dialogStore.isFileLabelEditorVisible = true"
+        >
+          <span class="material-symbols-outlined">edit</span>
+        </Button>
+      </div>
     </template>
   </Toolbar>
 
   <DirectoryLabelEditor />
+  <FileLabelEditor />
 </template>
 
 <style scoped>
 .toolbar {
   padding: 0 6px;
 
-  .start {
+  .group_1 {
     display: flex;
     column-gap: 8px;
   }
+
   button {
     width: 36px;
     height: 36px;

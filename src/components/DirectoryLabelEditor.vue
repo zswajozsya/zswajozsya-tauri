@@ -33,7 +33,6 @@ const selectedOption = ref<{
 
 watch(pathStore, (newState) => {
   if (newState.zswajozsya === null) return;
-  console.log(newState.zswajozsya);
   labels.value = newState.zswajozsya.labels;
   files.value = newState.zswajozsya.files;
 });
@@ -63,7 +62,7 @@ const removeOption = () => {
     header="Label Editor"
     style="height: 433px; width: 664px"
     class="dialog"
-    @hide="console.warn('TODO: hide')"
+    @hide="console.warn('TODO: save')"
   >
     <div class="dialog">
       <div class="labels">

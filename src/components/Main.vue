@@ -17,22 +17,21 @@ function handleEntryDoubleClick(entry: DirEntry) {
     const newPath = [...pathStore.path!, entry.file_name];
     pathStore.goTo(stringifyPath(newPath));
   } else {
-    // TODO: Open the file
-    console.log(entry.file_name);
+    console.warn('TODO: Open the file', entry.file_name);
   }
 }
 
-const handleClickEntry = (item: { selected: boolean; entry: DirEntry }) => {
-  item.selected = !item.selected;
+const handleClickEntry = (entry: DirEntry, index: number) => {
+  pathStore.selected_entry = index;
 
-  if (justClickedEntry.value === item.entry.file_name) {
-    handleEntryDoubleClick(item.entry);
+  if (justClickedEntry.value === entry.file_name) {
+    handleEntryDoubleClick(entry);
 
     justClickedEntry.value = null;
     clearTimeout(doubleClickTimeoutId);
   } else {
     clearTimeout(doubleClickTimeoutId);
-    justClickedEntry.value = item.entry.file_name;
+    justClickedEntry.value = entry.file_name;
     doubleClickTimeoutId = setTimeout(() => {
       justClickedEntry.value = null;
     }, DOUBLE_CLICK_INTERVAL);
@@ -45,26 +44,26 @@ const handleClickEntry = (item: { selected: boolean; entry: DirEntry }) => {
     <div v-if="pathStore.path === null">Loading...</div>
     <div v-else class="list">
       <div
-        v-for="item in pathStore.entries"
-        :class="`entry ${item.selected ? 'selected' : 'unselected'}`"
-        @click="handleClickEntry(item)"
+        v-for="entry, i in pathStore.entries"
+        :class="`entry ${pathStore.selected_entry === i ? 'selected' : ''}`"
+        @click="handleClickEntry(entry, i)"
       >
         <div class="line1">
           <span class="icon material-symbols-outlined">
             {{
-              item.entry.file_type === "Dir" ||
-              item.entry.file_type === "SymlinkDir"
+              entry.file_type === "Dir" ||
+              entry.file_type === "SymlinkDir"
                 ? "folder"
                 : "draft"
             }}
           </span>
-          <span class="name">{{ item.entry.file_name }}</span>
+          <span class="name">{{ entry.file_name }}</span>
           <span
             class="size"
-            v-text="stringifySize(item.entry.size)"
+            v-text="stringifySize(entry.size)"
             v-if="
-              item.entry.file_type !== 'Dir' &&
-              item.entry.file_type !== 'SymlinkDir'
+              entry.file_type !== 'Dir' &&
+              entry.file_type !== 'SymlinkDir'
             "
           ></span>
         </div>

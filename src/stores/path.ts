@@ -8,14 +8,13 @@ type State =
   | {
     path: null;
     entries: null;
+    selected_entry: null;
     zswajozsya: null;
   }
   | {
     path: string[];
-    entries: {
-      selected: boolean;
-      entry: DirEntry;
-    }[];
+    entries: DirEntry[];
+    selected_entry: null | number;
     zswajozsya: null | Zswajozsya,
   };
 
@@ -24,7 +23,8 @@ export const usePathStore = defineStore("path", {
     return {
       path: null,
       entries: null,
-      zswajozsya: null
+      selected_entry: null,
+      zswajozsya: null,
     } satisfies State as State;
   },
   actions: {
@@ -57,10 +57,6 @@ export const usePathStore = defineStore("path", {
           }
           return 0;
         })
-        .map((e) => ({
-          selected: false,
-          entry: e,
-        }));
         this.zswajozsya = res2.zswajozsya;
     },
 
@@ -82,11 +78,8 @@ export const usePathStore = defineStore("path", {
                 return 1;
               }
               return 0;
-            })
-            .map((e) => ({
-              selected: false,
-              entry: e,
-            }));
+            });
+          this.selected_entry = null;
           this.zswajozsya = ok.zswajozsya;
         },
         (err) => message(err, { type: "error" })
