@@ -38,7 +38,7 @@ const dialogStore = useDialogStore();
       <div class="group_2">
         <Button
           text
-          :disabled="pathStore.zswajozsya === null"
+          :disabled="pathStore.selected_entry === null"
           @click="dialogStore.isFileLabelEditorVisible = true"
         >
           <span class="material-symbols-outlined">edit</span>

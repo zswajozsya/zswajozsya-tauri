@@ -14,7 +14,7 @@ type State =
   | {
     path: string[];
     entries: DirEntry[];
-    selected_entry: null | number;
+    selected_entry: null | string;
     zswajozsya: null | Zswajozsya,
   };
 

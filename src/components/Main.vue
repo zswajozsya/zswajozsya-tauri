@@ -21,8 +21,8 @@ function handleEntryDoubleClick(entry: DirEntry) {
   }
 }
 
-const handleClickEntry = (entry: DirEntry, index: number) => {
-  pathStore.selected_entry = index;
+const handleClickEntry = (entry: DirEntry) => {
+  pathStore.selected_entry = entry.file_name;
 
   if (justClickedEntry.value === entry.file_name) {
     handleEntryDoubleClick(entry);
@@ -44,9 +44,9 @@ const handleClickEntry = (entry: DirEntry, index: number) => {
     <div v-if="pathStore.path === null">Loading...</div>
     <div v-else class="list">
       <div
-        v-for="entry, i in pathStore.entries"
-        :class="`entry ${pathStore.selected_entry === i ? 'selected' : ''}`"
-        @click="handleClickEntry(entry, i)"
+        v-for="entry in pathStore.entries"
+        :class="`entry ${pathStore.selected_entry === entry.file_name ? 'selected' : ''}`"
+        @click="handleClickEntry(entry)"
       >
         <div class="line1">
           <span class="icon material-symbols-outlined">
