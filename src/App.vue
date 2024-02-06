@@ -5,8 +5,6 @@ import Header from './components/Header.vue';
 import Toolbar from './components/Toolbar.vue';
 import Sidebar from './components/Sidebar.vue';
 import Main from './components/Main.vue';
-import Preview from './components/Preview.vue';
-
 </script>
 
 <template>
@@ -16,11 +14,8 @@ import Preview from './components/Preview.vue';
     <SplitterPanel :size="20">
       <Sidebar></Sidebar>
     </SplitterPanel>
-    <SplitterPanel :size="60">
+    <SplitterPanel :size="80">
       <Main></Main>
-    </SplitterPanel>
-    <SplitterPanel :size="20">
-      <Preview></Preview>
     </SplitterPanel>
   </Splitter>
 </template>
