@@ -28,6 +28,15 @@ watch(selectedLabel, () => {
   selectedOption.value = null;
 });
 
+const addLabel = () => {
+  pathStore.zswajozsya!.labels.push({
+    name: `New Label ${pathStore.zswajozsya!.labels.length + 1}`,
+    desc: "",
+    color: "#ffffff",
+    options: [],
+  });
+};
+
 const removeLabel = () => {
   const index = selectedLabel.value!.id;
   selectedLabel.value = null;
@@ -55,10 +64,15 @@ const addOption = () => {
     desc: "",
   });
   for (let i = 0; i < pathStore.zswajozsya!.files.length; i += 1) {
-    if (pathStore.zswajozsya!.files[i].labels[selectedLabel.value!.id] === undefined) {
-      pathStore.zswajozsya!.files[i].labels[selectedLabel.value!.id] = []
+    if (
+      pathStore.zswajozsya!.files[i].labels[selectedLabel.value!.id] ===
+      undefined
+    ) {
+      pathStore.zswajozsya!.files[i].labels[selectedLabel.value!.id] = [];
     } else {
-      pathStore.zswajozsya!.files[i].labels[selectedLabel.value!.id].push(false)
+      pathStore.zswajozsya!.files[i].labels[selectedLabel.value!.id].push(
+        false
+      );
     }
   }
 };
@@ -95,16 +109,7 @@ const applyLabelChanges = async () => {
           style="width: 200px"
         ></Listbox>
         <div class="buttons">
-          <Button
-            @click="
-              pathStore.zswajozsya!.labels.push({
-                name: `New Label ${pathStore.zswajozsya!.labels.length + 1}`,
-                desc: '',
-                color: '#ffffff',
-                options: [],
-              })
-            "
-          >
+          <Button @click="addLabel">
             <span class="material-symbols-outlined">add</span>
           </Button>
           <Button :disabled="selectedLabel === null" @click="removeLabel">
