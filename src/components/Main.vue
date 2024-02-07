@@ -109,6 +109,7 @@ const getEntryIcon = (entry: DirEntry) => {
           pathStore.selected_entry === entry.file_name ? 'selected' : ''
         }`"
         @click="handleClickEntry(entry)"
+        :title="entry.file_name"
       >
         <div class="line1">
           <span class="icon material-symbols-outlined">
