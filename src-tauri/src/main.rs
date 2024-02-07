@@ -27,7 +27,11 @@ fn read_dir(path: &str) -> Result<ReadDirRes, String> {
         Ok(v) => v,
         Err(err) => return Err(err.to_string()),
     };
-    let entries: Vec<DirEntry> = entries.into_iter().map(|e| e.into()).collect();
+    let entries: Vec<DirEntry> = entries
+        .into_iter()
+        .filter(|e| e.file_name() != ".zswajozsya.ron")
+        .map(|e| e.into())
+        .collect();
 
     let directory = match zswajozsya::get(path) {
         Ok(v) => v,
