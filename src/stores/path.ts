@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
-import { ReadDirRes, getHomeDir, readDir } from "../tauri";
-import { DirEntry, Zswajozsya } from "../types";
+import { ReadDirRes, getCommonPaths, readDir } from "../tauri";
+import { CommonPaths, DirEntry, Zswajozsya } from "../types";
 import { parsePath, stringifyPath } from "../utils";
 import { message } from "@tauri-apps/api/dialog";
 
@@ -10,12 +10,14 @@ type State =
     entries: null;
     selected_entry: null;
     zswajozsya: null;
+    common_paths: null
   }
   | {
     path: string[];
     entries: DirEntry[];
     selected_entry: null | string;
     zswajozsya: null | Zswajozsya,
+    common_paths: CommonPaths,
   };
 
 export const usePathStore = defineStore("path", {
@@ -25,13 +27,15 @@ export const usePathStore = defineStore("path", {
       entries: null,
       selected_entry: null,
       zswajozsya: null,
+      common_paths: null
     } satisfies State as State;
   },
   actions: {
     async init() {
       let initialPage = localStorage.getItem("defaultPage");
       if (initialPage === null) {
-        initialPage = await getHomeDir();
+        this.common_paths = await getCommonPaths();
+        initialPage = this.common_paths.user_dir;
       }
       this.path = parsePath(initialPage);
 
@@ -57,7 +61,7 @@ export const usePathStore = defineStore("path", {
           }
           return 0;
         })
-        this.zswajozsya = res2.zswajozsya;
+      this.zswajozsya = res2.zswajozsya;
     },
 
     async goTo(url: string) {

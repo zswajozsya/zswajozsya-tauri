@@ -10,18 +10,13 @@ use dir_entry::DirEntry;
 use serde::Serialize;
 use zswajozsya::Directory;
 
-// Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-#[tauri::command]
-fn get_home_dir() -> PathBuf {
-    home::home_dir().unwrap()
-}
-
 #[derive(Serialize)]
 struct ReadDirRes {
     entries: Vec<DirEntry>,
     zswajozsya: Option<Directory>,
 }
 
+// Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
 fn read_dir(path: &str) -> Result<ReadDirRes, String> {
     let read_dir = match std::fs::read_dir(path) {
@@ -58,10 +53,39 @@ fn set_dir(path: &str, dir: Directory) -> Result<(), String> {
     }
 }
 
+#[derive(Serialize)]
+struct CommonPaths {
+    user_dir: PathBuf,
+    desktop_dir: Option<PathBuf>,
+    download_dir: Option<PathBuf>,
+    document_dir: Option<PathBuf>,
+    image_dir: Option<PathBuf>,
+    video_dir: Option<PathBuf>,
+    audio_dir: Option<PathBuf>,
+    disks: Vec<PathBuf>,
+}
+
+#[tauri::command]
+fn get_common_paths() -> CommonPaths {
+    CommonPaths {
+        user_dir: dirs::home_dir().unwrap(),
+        desktop_dir: dirs::desktop_dir(),
+        download_dir: dirs::download_dir(),
+        document_dir: dirs::document_dir(),
+        image_dir: dirs::picture_dir(),
+        video_dir: dirs::video_dir(),
+        audio_dir: dirs::audio_dir(),
+        disks: sysinfo::Disks::new_with_refreshed_list()
+            .into_iter()
+            .map(|disk| disk.mount_point().to_path_buf())
+            .collect(),
+    }
+}
+
 fn main() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
-            get_home_dir,
+            get_common_paths,
             read_dir,
             init_dir,
             set_dir

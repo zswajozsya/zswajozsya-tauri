@@ -23,3 +23,14 @@ export type Label = {
         desc: string,
     }[],
 }
+
+export type CommonPaths = {
+    user_dir: string,
+    desktop_dir: string | null,
+    download_dir: string | null,
+    document_dir: string | null,
+    image_dir: string | null,
+    video_dir: string | null,
+    audio_dir: string | null,
+    disks: string[],
+}

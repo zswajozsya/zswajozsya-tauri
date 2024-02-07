@@ -1,9 +1,9 @@
 import { invoke } from '@tauri-apps/api'
-import { DirEntry, Zswajozsya } from '../types';
+import { CommonPaths, DirEntry, Zswajozsya } from '../types';
 import { Result } from '../libs/result';
 
-export async function getHomeDir() {
-    return invoke('get_home_dir') as Promise<string>;
+export async function getCommonPaths() {
+    return invoke('get_common_paths') as Promise<CommonPaths>;
 }
 
 export type ReadDirRes = {
