@@ -17,13 +17,21 @@ export function stringifyPath(path: string[]): string {
 }
 
 export function stringifySize(size: number): string {
-    if (size < 10000) {
+    if (size < 1024) {
         return `${size} B`;
     }
-    const kb = size >> 10;
-    if (kb < 10000) {
-        return `${kb} KB`
+    const kb = size / 2 ** 10;
+    if (kb < 1000) {
+        return `${kb.toPrecision(3)} KB`
+    } else if (kb < 1024) {
+        return `${kb.toFixed(0)} KB`
     }
-    const mb = size >> 20;
-    return `${mb} MB`
+    const mb = size / 2 ** 20;
+    if (mb < 1000) {
+        return `${mb.toPrecision(3)} MB`
+    } else if (mb < 1024) {
+        return `${mb.toFixed(0)} MB`
+    }
+    const gb = size / 2 ** 30;
+    return `${gb.toPrecision(3)} GB`
 }
