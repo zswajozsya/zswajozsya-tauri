@@ -39,6 +39,64 @@ const handleClickEntry = (entry: DirEntry) => {
     }, DOUBLE_CLICK_INTERVAL);
   }
 };
+
+const getEntryIcon = (entry: DirEntry) => {
+  if (entry.file_type === "Dir" || entry.file_type === "SymlinkDir") {
+    return "folder";
+  }
+  const ext = entry.file_name.split(".").pop()?.toLowerCase();
+  if (ext === undefined) {
+    return "draft";
+  }
+  if (["exe", "msi"].includes(ext)) {
+    return "tabs";
+  }
+  if (["zip", "7z", "rar"].includes(ext)) {
+    return "folder_zip";
+  }
+  if (["mp4", "mkv", "mov", 'wmv'].includes(ext)) {
+    return "movie";
+  }
+  if (["jpg", "jpeg", "png", "svg"].includes(ext)) {
+    return "image";
+  }
+  if (["dll"].includes(ext)) {
+    return "sdk";
+  }
+  if (["pdf"].includes(ext)) {
+    return "book";
+  }
+  if (["lnk", "url"].includes(ext)) {
+    return "link";
+  }
+  if (
+    [
+      "json",
+      "yaml",
+      "toml",
+      "lock",
+      "html",
+      "vue",
+      "ini",
+      "tsx",
+      "jsx",
+      "css",
+      "ron",
+      "js",
+      "ts",
+      "rs",
+    ].includes(ext)
+  ) {
+    return "code";
+  }
+  if (["mp3", "opus", "flac", "m4a"].includes(ext)) {
+    return "music_note";
+  }
+  if (["txt", "md", 'doc', 'docx'].includes(ext)) {
+    return "description";
+  }
+  return "draft";
+};
 </script>
 
 <template>
@@ -54,11 +112,7 @@ const handleClickEntry = (entry: DirEntry) => {
       >
         <div class="line1">
           <span class="icon material-symbols-outlined">
-            {{
-              entry.file_type === "Dir" || entry.file_type === "SymlinkDir"
-                ? "folder"
-                : "draft"
-            }}
+            {{ getEntryIcon(entry) }}
           </span>
           <span class="name">{{ entry.file_name }}</span>
           <span
@@ -68,7 +122,13 @@ const handleClickEntry = (entry: DirEntry) => {
           ></span>
         </div>
         <div class="line2">
-          <Labels :labels="pathStore.zswajozsya?.files.find((file) => file.filename === entry.file_name)?.labels"></Labels>
+          <Labels
+            :labels="
+              pathStore.zswajozsya?.files.find(
+                (file) => file.filename === entry.file_name
+              )?.labels
+            "
+          ></Labels>
         </div>
       </div>
     </div>
