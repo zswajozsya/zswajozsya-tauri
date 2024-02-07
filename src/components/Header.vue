@@ -6,6 +6,12 @@ import { stringifyPath } from "../utils";
 
 const pathStore = usePathStore();
 pathStore.init();
+
+window.addEventListener('mousedown', (e) => {
+  if (e.button === 3 && pathStore.path !== null && pathStore.path.length > 1) {
+    pathStore.goUp();
+  }
+})
 </script>
 
 <template>
