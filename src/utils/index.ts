@@ -1,19 +1,18 @@
 export function parsePath(path: string): string[] {
     if (path === '') return [];
-    if (path.startsWith('/')) {
-        const restPath = path.substring(1, path.length);
-        return restPath === '' ? ['/'] : ['/', ...restPath.split('/')];
-    } else {
-        return path.split('\\')
+    const splittedPath = path.split(path.startsWith('/') ? '/' : '\\');
+    if (splittedPath[splittedPath.length - 1] === '') {
+        splittedPath.pop()
     }
+    return splittedPath;
 }
 
 export function stringifyPath(path: string[]): string {
-    return path[0] === '/' ?
+    return path[0] === '' ?
         // Unix
-        `/${path.slice(1, path.length).join('/')}` :
+        `${path.join('/')}/` :
         // Windows
-        path.join('\\');
+        `${path.join('\\')}\\`;
 }
 
 export function stringifySize(size: number): string {
