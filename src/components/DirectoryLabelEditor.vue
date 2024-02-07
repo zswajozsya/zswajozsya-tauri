@@ -8,21 +8,13 @@ import ColorPicker from "./ColorPicker.vue";
 
 import { usePathStore } from "../stores/path";
 import { useDialogStore } from "../stores/dialog";
-import { reactive, ref, watch } from "vue";
-import { Label } from "../types";
+import { ref, watch } from "vue";
 import { setDir } from "../tauri";
 import { message } from "@tauri-apps/api/dialog";
 
 const pathStore = usePathStore();
 const dialogStore = useDialogStore();
 
-let files:
-  | {
-      filename: string;
-      labels: boolean[][];
-    }[]
-  | null = null;
-const labels = reactive<{ value: Label[] | null }>({ value: null });
 const selectedLabel = ref<{
   name: string;
   id: number;
@@ -32,12 +24,6 @@ const selectedOption = ref<{
   id: number;
 } | null>(null);
 
-watch(pathStore, (newState) => {
-  if (newState.zswajozsya === null) return;
-  labels.value = newState.zswajozsya.labels;
-  files = newState.zswajozsya.files;
-});
-
 watch(selectedLabel, () => {
   selectedOption.value = null;
 });
@@ -45,9 +31,9 @@ watch(selectedLabel, () => {
 const removeLabel = () => {
   const index = selectedLabel.value!.id;
   selectedLabel.value = null;
-  labels.value!.splice(index, 1);
-  for (let i = 0; i < files!.length; i += 1) {
-    files![i].labels.splice(index, 1);
+  pathStore.zswajozsya!.labels.splice(index, 1);
+  for (let i = 0; i < pathStore.zswajozsya!.files.length; i += 1) {
+    pathStore.zswajozsya!.files[i].labels.splice(index, 1);
   }
 };
 
@@ -55,19 +41,30 @@ const removeOption = () => {
   const labelIndex = selectedLabel.value!.id;
   const optionIndex = selectedOption.value!.id;
   selectedOption.value = null;
-  labels.value![labelIndex].options.splice(optionIndex, 1);
-  for (let i = 0; i < files!.length; i += 1) {
-    files![i].labels[labelIndex].splice(optionIndex, 1);
+  pathStore.zswajozsya!.labels[labelIndex].options.splice(optionIndex, 1);
+  for (let i = 0; i < pathStore.zswajozsya!.files.length; i += 1) {
+    pathStore.zswajozsya!.files[i].labels[labelIndex].splice(optionIndex, 1);
+  }
+};
+
+const addOption = () => {
+  pathStore.zswajozsya!.labels[selectedLabel.value!.id].options.push({
+    name: `New Option ${
+      pathStore.zswajozsya!.labels[selectedLabel.value!.id].options.length + 1
+    }`,
+    desc: "",
+  });
+  for (let i = 0; i < pathStore.zswajozsya!.files.length; i += 1) {
+    if (pathStore.zswajozsya!.files[i].labels[selectedLabel.value!.id] === undefined) {
+      pathStore.zswajozsya!.files[i].labels[selectedLabel.value!.id] = []
+    } else {
+      pathStore.zswajozsya!.files[i].labels[selectedLabel.value!.id].push(false)
+    }
   }
 };
 
 const applyLabelChanges = async () => {
-  pathStore.zswajozsya!.files = files!;
-  pathStore.zswajozsya!.labels = labels.value!;
-  const res = await setDir(pathStore.pathString!, {
-    files: files!,
-    labels: labels.value!,
-  });
+  const res = await setDir(pathStore.pathString!, pathStore.zswajozsya!);
   res.match(
     (_) => {},
     (err) =>
@@ -93,15 +90,15 @@ const applyLabelChanges = async () => {
       <div class="labels">
         <Listbox
           v-model="selectedLabel"
-          :options="labels.value!.map((e, i) => ({ name: e.name, id: i }))"
+          :options="pathStore.zswajozsya!.labels.map((e, i) => ({ name: e.name, id: i }))"
           option-label="name"
           style="width: 200px"
         ></Listbox>
         <div class="buttons">
           <Button
             @click="
-              labels.value!.push({
-                name: `New Label ${labels.value!.length + 1}`,
+              pathStore.zswajozsya!.labels.push({
+                name: `New Label ${pathStore.zswajozsya!.labels.length + 1}`,
                 desc: '',
                 color: '#ffffff',
                 options: [],
@@ -126,22 +123,12 @@ const applyLabelChanges = async () => {
           style="width: 200px"
           v-model="selectedOption"
           :options="selectedLabel !== null 
-            ? labels.value![selectedLabel.id].options.map((e, i) => ({ name: e.name, id: i })) 
+            ? pathStore.zswajozsya!.labels[selectedLabel.id].options.map((e, i) => ({ name: e.name, id: i })) 
             : undefined"
           option-label="name"
         ></Listbox>
         <div class="buttons">
-          <Button
-            :disabled="selectedLabel === null"
-            @click="
-              labels.value![selectedLabel!.id].options.push({
-                name: `New Option ${
-                  labels.value![selectedLabel!.id].options.length + 1
-                }`,
-                desc: '',
-              })
-            "
-          >
+          <Button :disabled="selectedLabel === null" @click="addOption">
             <span class="material-symbols-outlined">add</span>
           </Button>
           <Button
@@ -158,31 +145,31 @@ const applyLabelChanges = async () => {
           <InputText
             id="name"
             v-if="selectedLabel !== null && selectedOption !== null"
-            v-model="labels.value![selectedLabel.id].options[selectedOption.id].name"
+            v-model="pathStore.zswajozsya!.labels[selectedLabel.id].options[selectedOption.id].name"
           />
           <InputText
             id="name"
             v-else-if="selectedLabel !== null"
-            v-model="labels.value![selectedLabel.id].name"
+            v-model="pathStore.zswajozsya!.labels[selectedLabel.id].name"
           />
           <InputText id="name" v-else disabled />
           <label for="description" style="margin-top: 8px">Description</label>
           <Textarea
             id="description"
             v-if="selectedLabel !== null && selectedOption !== null"
-            v-model="labels.value![selectedLabel.id].options[selectedOption.id].desc"
+            v-model="pathStore.zswajozsya!.labels[selectedLabel.id].options[selectedOption.id].desc"
           ></Textarea>
           <Textarea
             id="description"
             v-else-if="selectedLabel !== null"
-            v-model="labels.value![selectedLabel.id].desc"
+            v-model="pathStore.zswajozsya!.labels[selectedLabel.id].desc"
           ></Textarea>
           <Textarea id="description" v-else disabled></Textarea>
         </div>
         <div class="buttons">
           <ColorPicker
             v-if="selectedOption === null && selectedLabel !== null"
-            v-model="(labels.value![selectedLabel.id].color as string)"
+            v-model="(pathStore.zswajozsya!.labels[selectedLabel.id].color as string)"
             class="color_picker"
           />
         </div>
