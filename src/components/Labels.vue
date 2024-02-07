@@ -33,7 +33,6 @@ const labels = computed(() => {
 
 <template>
   <main>
-    <!-- TODO: Test decs title -->
     <div
       v-for="label in labels"
       :title="label.desc"
