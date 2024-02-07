@@ -50,7 +50,7 @@ const dialogStore = useDialogStore();
       <div class="group_3">
         <Button
           text
-          :disabled="pathStore.selected_entry === null"
+          :disabled="pathStore.zswajozsya === null || pathStore.selected_entry === null"
           @click="dialogStore.isFileLabelEditorVisible = true"
           title="Edit labels of the selected entry"
         >
