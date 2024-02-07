@@ -33,3 +33,7 @@ export async function setDir(path: string, dir: Zswajozsya): Promise<Result<void
     }
 }
 
+export async function openPath(path: string) {
+    return invoke('open_path', { path }) as Promise<void>;
+}
+

@@ -82,13 +82,19 @@ fn get_common_paths() -> CommonPaths {
     }
 }
 
+#[tauri::command]
+fn open_path(path: PathBuf) {
+    open::that(path).unwrap()
+}
+
 fn main() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
             get_common_paths,
             read_dir,
             init_dir,
-            set_dir
+            set_dir,
+            open_path
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

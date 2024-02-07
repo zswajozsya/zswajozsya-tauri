@@ -4,6 +4,7 @@ import { ref } from "vue";
 import Labels from "./Labels.vue";
 import { DirEntry } from "../types";
 import { stringifyPath, stringifySize } from "../utils";
+import { openPath } from "../tauri";
 
 const DOUBLE_CLICK_INTERVAL = 500;
 let doubleClickTimeoutId: number | undefined = undefined;
@@ -13,11 +14,12 @@ const pathStore = usePathStore();
 const justClickedEntry = ref<string | null>(null);
 
 function handleEntryDoubleClick(entry: DirEntry) {
+  const newPath = [...pathStore.path!, entry.file_name];
+  const newPathStr = stringifyPath(newPath);
   if (entry.file_type === "Dir" || entry.file_type === "SymlinkDir") {
-    const newPath = [...pathStore.path!, entry.file_name];
-    pathStore.goTo(stringifyPath(newPath));
+    pathStore.goTo(newPathStr);
   } else {
-    console.warn("TODO: Open the file", entry.file_name);
+    openPath(newPathStr);
   }
 }
 
