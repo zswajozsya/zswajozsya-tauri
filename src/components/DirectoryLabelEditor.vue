@@ -35,6 +35,9 @@ const addLabel = () => {
     color: "#ffffff",
     options: [],
   });
+  for (let i = 0; i < pathStore.zswajozsya!.files.length; i += 1) {
+    pathStore.zswajozsya!.files[i].labels.push([])
+  }
 };
 
 const removeLabel = () => {
