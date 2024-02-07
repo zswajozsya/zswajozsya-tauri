@@ -1,24 +1,24 @@
 import { defineStore } from "pinia";
 import { ReadDirRes, getCommonPaths, readDir } from "../tauri";
 import { CommonPaths, DirEntry, Zswajozsya } from "../types";
-import { parsePath, stringifyPath } from "../utils";
+import { parsePath, sortEntries, stringifyPath } from "../utils";
 import { message } from "@tauri-apps/api/dialog";
 
 type State =
   | {
-    path: null;
-    entries: null;
-    selected_entry: null;
-    zswajozsya: null;
-    common_paths: null
-  }
+      path: null;
+      entries: null;
+      selected_entry: null;
+      zswajozsya: null;
+      common_paths: null;
+    }
   | {
-    path: string[];
-    entries: DirEntry[];
-    selected_entry: null | string;
-    zswajozsya: null | Zswajozsya,
-    common_paths: CommonPaths,
-  };
+      path: string[];
+      entries: DirEntry[];
+      selected_entry: null | string;
+      zswajozsya: null | Zswajozsya;
+      common_paths: CommonPaths;
+    };
 
 export const usePathStore = defineStore("path", {
   state: () => {
@@ -27,7 +27,7 @@ export const usePathStore = defineStore("path", {
       entries: null,
       selected_entry: null,
       zswajozsya: null,
-      common_paths: null
+      common_paths: null,
     } satisfies State as State;
   },
   actions: {
@@ -50,17 +50,7 @@ export const usePathStore = defineStore("path", {
           };
         }
       );
-      this.entries = res2.entries
-        .sort((a, b) => {
-          const a_is_dir = a.file_type == "Dir" || a.file_type == "SymlinkDir";
-          const b_is_dir = b.file_type == "Dir" || b.file_type == "SymlinkDir";
-          if (a_is_dir && !b_is_dir) {
-            return -1;
-          } else if (!a_is_dir && b_is_dir) {
-            return 1;
-          }
-          return 0;
-        })
+      this.entries = sortEntries(res2.entries, res2.zswajozsya?.files);
       this.zswajozsya = res2.zswajozsya;
     },
 
@@ -69,20 +59,7 @@ export const usePathStore = defineStore("path", {
       res.match(
         (ok) => {
           this.path = parsePath(url);
-          this.entries = ok
-            .entries
-            .sort((a, b) => {
-              const a_is_dir =
-                a.file_type == "Dir" || a.file_type == "SymlinkDir";
-              const b_is_dir =
-                b.file_type == "Dir" || b.file_type == "SymlinkDir";
-              if (a_is_dir && !b_is_dir) {
-                return -1;
-              } else if (!a_is_dir && b_is_dir) {
-                return 1;
-              }
-              return 0;
-            });
+          this.entries = sortEntries(ok.entries, ok.zswajozsya?.files);
           this.selected_entry = null;
           this.zswajozsya = ok.zswajozsya;
         },
