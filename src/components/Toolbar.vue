@@ -5,7 +5,7 @@ import Divider from "primevue/divider";
 
 import { usePathStore } from "../stores/path";
 import { useDialogStore } from "../stores/dialog";
-import { initDir, openPath } from "../tauri";
+import { openPath, setDir } from "../tauri";
 import DirectoryLabelEditor from "./DirectoryLabelEditor.vue";
 import FileLabelEditor from "./FileLabelEditor.vue";
 
@@ -18,17 +18,17 @@ const dialogStore = useDialogStore();
     <template #start>
       <div class="group_1">
         <Button
-          :text="pathStore.zswajozsya !== null"
+          :text="pathStore.directory !== null"
           aria-label="Initialize Directory"
           title="Initialize Directory"
-          :disabled="pathStore.zswajozsya !== null"
-          @click="initDir(pathStore.pathString!)"
+          :disabled="pathStore.directory !== null"
+          @click="setDir(pathStore.pathString!, { entries: [], labels: [] })"
         >
           <span class="material-symbols-outlined">enable</span>
         </Button>
         <Button
           text
-          :disabled="pathStore.zswajozsya === null"
+          :disabled="pathStore.directory === null"
           @click="dialogStore.isDirectoryLabelEditorVisible = true"
           title="Edit label configuration of this directory"
         >
@@ -50,7 +50,9 @@ const dialogStore = useDialogStore();
       <div class="group_3">
         <Button
           text
-          :disabled="pathStore.zswajozsya === null || pathStore.selected_entry === null"
+          :disabled="
+            pathStore.directory === null || pathStore.selected_entry === null
+          "
           @click="dialogStore.isFileLabelEditorVisible = true"
           title="Edit labels of the selected entry"
         >

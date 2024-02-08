@@ -1,22 +1,28 @@
 import { defineStore } from "pinia";
-import { ReadDirRes, getCommonPaths, readDir } from "../tauri";
-import { CommonPaths, DirEntry, Zswajozsya } from "../types";
-import { parsePath, sortEntries, stringifyPath } from "../utils";
+import { getCommonPaths, readDir } from "../tauri";
+import { CommonPaths, GenDirEntry, Label, ZswDirEntry } from "../types";
+import { parsePath, stringifyPath } from "../utils";
 import { message } from "@tauri-apps/api/dialog";
 
 type State =
   | {
       path: null;
-      entries: null;
+      directory: null;
       selected_entry: null;
-      zswajozsya: null;
       common_paths: null;
     }
   | {
       path: string[];
-      entries: DirEntry[];
-      selected_entry: null | string;
-      zswajozsya: null | Zswajozsya;
+      directory:
+        | {
+            entries: GenDirEntry[];
+            labels: undefined;
+          }
+        | {
+            entries: ZswDirEntry[];
+            labels: Label[];
+          };
+      selected_entry: null | number;
       common_paths: CommonPaths;
     };
 
@@ -24,9 +30,8 @@ export const usePathStore = defineStore("path", {
   state: () => {
     return {
       path: null,
-      entries: null,
+      directory: null,
       selected_entry: null,
-      zswajozsya: null,
       common_paths: null,
     } satisfies State as State;
   },
@@ -40,18 +45,16 @@ export const usePathStore = defineStore("path", {
       this.path = parsePath(initialPage);
 
       const res = await readDir(initialPage);
-      const res2: ReadDirRes = res.match(
+      this.directory = res.match(
         (ok) => ok,
         (err) => {
           message(err, { type: "error" });
           return {
             entries: [],
-            zswajozsya: null,
+            labels: undefined,
           };
         }
       );
-      this.entries = sortEntries(res2.entries, res2.zswajozsya?.files);
-      this.zswajozsya = res2.zswajozsya;
     },
 
     async goTo(url: string) {
@@ -59,9 +62,8 @@ export const usePathStore = defineStore("path", {
       res.match(
         (ok) => {
           this.path = parsePath(url);
-          this.entries = sortEntries(ok.entries, ok.zswajozsya?.files);
+          this.directory = ok;
           this.selected_entry = null;
-          this.zswajozsya = ok.zswajozsya;
         },
         (err) => message(err, { type: "error" })
       );

@@ -1,15 +1,15 @@
-export type DirEntry = {
+export type GenDirEntry = {
     file_name: string,
     file_type: 'Dir' | 'File',
     size: number,
+    labels: undefined
 }
 
-export type Zswajozsya = {
-    files: {
-        filename: string,
-        labels: boolean[][],
-    }[],
-    labels: Label[],
+export type ZswDirEntry = {
+    file_name: string,
+    file_type: 'Dir' | 'File',
+    size: number,
+    labels: boolean[][]
 }
 
 export type Label = {

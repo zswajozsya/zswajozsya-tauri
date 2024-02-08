@@ -29,23 +29,23 @@ watch(selectedLabel, () => {
 });
 
 const addLabel = () => {
-  pathStore.zswajozsya!.labels.push({
-    name: `New Label ${pathStore.zswajozsya!.labels.length + 1}`,
+  pathStore.directory!.labels!.push({
+    name: `New Label ${pathStore.directory!.labels!.length + 1}`,
     desc: "",
     color: "#ffffff",
     options: [],
   });
-  for (let i = 0; i < pathStore.zswajozsya!.files.length; i += 1) {
-    pathStore.zswajozsya!.files[i].labels.push([])
+  for (let i = 0; i < pathStore.directory!.entries.length; i += 1) {
+    pathStore.directory!.entries[i].labels!.push([]);
   }
 };
 
 const removeLabel = () => {
   const index = selectedLabel.value!.id;
   selectedLabel.value = null;
-  pathStore.zswajozsya!.labels.splice(index, 1);
-  for (let i = 0; i < pathStore.zswajozsya!.files.length; i += 1) {
-    pathStore.zswajozsya!.files[i].labels.splice(index, 1);
+  pathStore.directory!.labels!.splice(index, 1);
+  for (let i = 0; i < pathStore.directory!.entries.length; i += 1) {
+    pathStore.directory!.entries[i].labels!.splice(index, 1);
   }
 };
 
@@ -53,27 +53,27 @@ const removeOption = () => {
   const labelIndex = selectedLabel.value!.id;
   const optionIndex = selectedOption.value!.id;
   selectedOption.value = null;
-  pathStore.zswajozsya!.labels[labelIndex].options.splice(optionIndex, 1);
-  for (let i = 0; i < pathStore.zswajozsya!.files.length; i += 1) {
-    pathStore.zswajozsya!.files[i].labels[labelIndex].splice(optionIndex, 1);
+  pathStore.directory!.labels![labelIndex].options.splice(optionIndex, 1);
+  for (let i = 0; i < pathStore.directory!.entries.length; i += 1) {
+    pathStore.directory!.entries[i].labels![labelIndex].splice(optionIndex, 1);
   }
 };
 
 const addOption = () => {
-  pathStore.zswajozsya!.labels[selectedLabel.value!.id].options.push({
+  pathStore.directory!.labels![selectedLabel.value!.id].options.push({
     name: `New Option ${
-      pathStore.zswajozsya!.labels[selectedLabel.value!.id].options.length + 1
+      pathStore.directory!.labels![selectedLabel.value!.id].options.length + 1
     }`,
     desc: "",
   });
-  for (let i = 0; i < pathStore.zswajozsya!.files.length; i += 1) {
+  for (let i = 0; i < pathStore.directory!.entries.length; i += 1) {
     if (
-      pathStore.zswajozsya!.files[i].labels[selectedLabel.value!.id] ===
+      pathStore.directory!.entries[i].labels![selectedLabel.value!.id] ===
       undefined
     ) {
-      pathStore.zswajozsya!.files[i].labels[selectedLabel.value!.id] = [];
+      pathStore.directory!.entries[i].labels![selectedLabel.value!.id] = [];
     } else {
-      pathStore.zswajozsya!.files[i].labels[selectedLabel.value!.id].push(
+      pathStore.directory!.entries[i].labels![selectedLabel.value!.id].push(
         false
       );
     }
@@ -81,7 +81,13 @@ const addOption = () => {
 };
 
 const applyLabelChanges = async () => {
-  const res = await setDir(pathStore.pathString!, pathStore.zswajozsya!);
+  const res = await setDir(pathStore.pathString!, {
+    entries: pathStore.directory!.entries.map((entry) => ({
+      name: entry.file_name,
+      labels: entry.labels!,
+    })),
+    labels: pathStore.directory!.labels!
+  });
   res.match(
     (_) => {},
     (err) =>
@@ -107,7 +113,7 @@ const applyLabelChanges = async () => {
       <div class="labels">
         <Listbox
           v-model="selectedLabel"
-          :options="pathStore.zswajozsya!.labels.map((e, i) => ({ name: e.name, id: i }))"
+          :options="pathStore.directory!.labels!.map((e, i) => ({ name: e.name, id: i }))"
           option-label="name"
           style="width: 200px"
         ></Listbox>
@@ -131,7 +137,7 @@ const applyLabelChanges = async () => {
           style="width: 200px"
           v-model="selectedOption"
           :options="selectedLabel !== null 
-            ? pathStore.zswajozsya!.labels[selectedLabel.id].options.map((e, i) => ({ name: e.name, id: i })) 
+            ? pathStore.directory!.labels![selectedLabel.id].options.map((e, i) => ({ name: e.name, id: i })) 
             : undefined"
           option-label="name"
         ></Listbox>
@@ -153,31 +159,31 @@ const applyLabelChanges = async () => {
           <InputText
             id="name"
             v-if="selectedLabel !== null && selectedOption !== null"
-            v-model="pathStore.zswajozsya!.labels[selectedLabel.id].options[selectedOption.id].name"
+            v-model="pathStore.directory!.labels![selectedLabel.id].options[selectedOption.id].name"
           />
           <InputText
             id="name"
             v-else-if="selectedLabel !== null"
-            v-model="pathStore.zswajozsya!.labels[selectedLabel.id].name"
+            v-model="pathStore.directory!.labels![selectedLabel.id].name"
           />
           <InputText id="name" v-else disabled />
           <label for="description" style="margin-top: 8px">Description</label>
           <Textarea
             id="description"
             v-if="selectedLabel !== null && selectedOption !== null"
-            v-model="pathStore.zswajozsya!.labels[selectedLabel.id].options[selectedOption.id].desc"
+            v-model="pathStore.directory!.labels![selectedLabel.id].options[selectedOption.id].desc"
           ></Textarea>
           <Textarea
             id="description"
             v-else-if="selectedLabel !== null"
-            v-model="pathStore.zswajozsya!.labels[selectedLabel.id].desc"
+            v-model="pathStore.directory!.labels![selectedLabel.id].desc"
           ></Textarea>
           <Textarea id="description" v-else disabled></Textarea>
         </div>
         <div class="buttons">
           <ColorPicker
             v-if="selectedOption === null && selectedLabel !== null"
-            v-model="(pathStore.zswajozsya!.labels[selectedLabel.id].color as string)"
+            v-model="(pathStore.directory!.labels![selectedLabel.id].color as string)"
             class="color_picker"
           />
         </div>

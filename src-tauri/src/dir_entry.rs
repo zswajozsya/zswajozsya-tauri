@@ -3,19 +3,26 @@ use serde::Serialize;
 use crate::file_type::FileType;
 
 #[derive(Serialize)]
-pub(crate) struct DirEntry {
-    file_name: String,
-    file_type: FileType,
+pub(crate) struct GenDirEntry {
+    pub(crate) file_name: String,
+    pub(crate) file_type: FileType,
     size: u64,
 }
 
-impl From<std::fs::DirEntry> for DirEntry {
+impl From<std::fs::DirEntry> for GenDirEntry {
     fn from(value: std::fs::DirEntry) -> Self {
-        let metadata = value.metadata().unwrap();
-        DirEntry {
+        GenDirEntry {
             file_name: value.file_name().into_string().unwrap(),
             file_type: value.file_type().unwrap().into(),
-            size: metadata.len(),
+            size: value.metadata().unwrap().len(),
         }
     }
+}
+
+#[derive(Serialize)]
+pub(crate) struct ZswDirEntry {
+    pub(crate) file_name: String,
+    pub(crate) file_type: FileType,
+    pub(crate) size: u64,
+    pub(crate) labels: Vec<Vec<bool>>,
 }

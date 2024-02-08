@@ -11,8 +11,8 @@ const pathStore = usePathStore();
 
 const labels = computed(() => {
   if (props.labels === undefined) return [];
-  if (pathStore.zswajozsya === null) return [];
-  return pathStore.zswajozsya.labels
+  if (pathStore.directory?.labels === undefined) return [];
+  return pathStore.directory.labels
     .map((label, i) =>
       label.options.map((option, j) => ({
         name: option.name,

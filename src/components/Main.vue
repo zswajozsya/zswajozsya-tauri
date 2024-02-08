@@ -2,9 +2,9 @@
 import { usePathStore } from "../stores/path";
 import { ref } from "vue";
 import Labels from "./Labels.vue";
-import { DirEntry } from "../types";
 import { stringifyPath, stringifySize } from "../utils";
 import { openPath } from "../tauri";
+import { GenDirEntry, ZswDirEntry } from "../types";
 
 const DOUBLE_CLICK_INTERVAL = 500;
 let doubleClickTimeoutId: number | undefined = undefined;
@@ -13,18 +13,18 @@ const pathStore = usePathStore();
 
 const justClickedEntry = ref<string | null>(null);
 
-function handleEntryDoubleClick(entry: DirEntry) {
+function handleEntryDoubleClick(entry: GenDirEntry | ZswDirEntry) {
   const newPath = [...pathStore.path!, entry.file_name];
   const newPathStr = stringifyPath(newPath);
-  if (entry.file_type === "Dir" || entry.file_type === "SymlinkDir") {
+  if (entry.file_type === "Dir") {
     pathStore.goTo(newPathStr);
   } else {
     openPath(newPathStr);
   }
 }
 
-const handleClickEntry = (entry: DirEntry) => {
-  pathStore.selected_entry = entry.file_name;
+const handleClickEntry = (entry: GenDirEntry | ZswDirEntry, i: number) => {
+  pathStore.selected_entry = i;
 
   if (justClickedEntry.value === entry.file_name) {
     handleEntryDoubleClick(entry);
@@ -40,8 +40,8 @@ const handleClickEntry = (entry: DirEntry) => {
   }
 };
 
-const getEntryIcon = (entry: DirEntry) => {
-  if (entry.file_type === "Dir" || entry.file_type === "SymlinkDir") {
+const getEntryIcon = (entry: GenDirEntry | ZswDirEntry) => {
+  if (entry.file_type === "Dir") {
     return "folder";
   }
   const ext = entry.file_name.split(".").pop()?.toLowerCase();
@@ -54,7 +54,7 @@ const getEntryIcon = (entry: DirEntry) => {
   if (["zip", "7z", "rar"].includes(ext)) {
     return "folder_zip";
   }
-  if (["mp4", "mkv", "mov", 'wmv'].includes(ext)) {
+  if (["mp4", "mkv", "mov", "wmv"].includes(ext)) {
     return "movie";
   }
   if (["jpg", "jpeg", "png", "svg"].includes(ext)) {
@@ -92,7 +92,7 @@ const getEntryIcon = (entry: DirEntry) => {
   if (["mp3", "opus", "flac", "m4a"].includes(ext)) {
     return "music_note";
   }
-  if (["txt", "md", 'doc', 'docx'].includes(ext)) {
+  if (["txt", "md", "doc", "docx"].includes(ext)) {
     return "description";
   }
   return "draft";
@@ -101,14 +101,12 @@ const getEntryIcon = (entry: DirEntry) => {
 
 <template>
   <div class="root">
-    <div v-if="pathStore.path === null">Loading...</div>
+    <div v-if="pathStore.directory === null">Loading...</div>
     <div v-else class="list">
       <div
-        v-for="entry in pathStore.entries"
-        :class="`entry ${
-          pathStore.selected_entry === entry.file_name ? 'selected' : ''
-        }`"
-        @click="handleClickEntry(entry)"
+        v-for="(entry, i) in pathStore.directory.entries"
+        :class="`entry ${pathStore.selected_entry === i ? 'selected' : ''}`"
+        @click="handleClickEntry(entry, i)"
         :title="entry.file_name"
       >
         <div class="line1">
@@ -119,17 +117,11 @@ const getEntryIcon = (entry: DirEntry) => {
           <span
             class="size"
             v-text="stringifySize(entry.size)"
-            v-if="entry.file_type !== 'Dir' && entry.file_type !== 'SymlinkDir'"
+            v-if="entry.file_type === 'File'"
           ></span>
         </div>
         <div class="line2">
-          <Labels
-            :labels="
-              pathStore.zswajozsya?.files.find(
-                (file) => file.filename === entry.file_name
-              )?.labels
-            "
-          ></Labels>
+          <Labels :labels="entry.labels"></Labels>
         </div>
       </div>
     </div>
