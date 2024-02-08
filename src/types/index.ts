@@ -1,6 +1,6 @@
 export type DirEntry = {
     file_name: string,
-    file_type: 'Dir' | 'File' | 'SymlinkDir' | 'SymlinkFile',
+    file_type: 'Dir' | 'File',
     size: number,
 }
 
