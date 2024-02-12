@@ -49,6 +49,40 @@ const removeLabel = () => {
   }
 };
 
+const moveUpLabel = () => {
+  const index = selectedLabel.value!.id;
+
+  selectedLabel.value!.id -= 1;
+
+  const temp = pathStore.directory!.labels![index];
+  pathStore.directory!.labels![index] = pathStore.directory!.labels![index - 1];
+  pathStore.directory!.labels![index - 1] = temp;
+
+  for (let i = 0; i < pathStore.directory!.entries.length; i += 1) {
+    const temp = pathStore.directory!.entries[i].labels![index];
+    pathStore.directory!.entries[i].labels![index] =
+      pathStore.directory!.entries[i].labels![index - 1];
+    pathStore.directory!.entries[i].labels![index - 1] = temp;
+  }
+};
+
+const moveDownLabel = () => {
+  const index = selectedLabel.value!.id;
+
+  selectedLabel.value!.id += 1;
+
+  const temp = pathStore.directory!.labels![index];
+  pathStore.directory!.labels![index] = pathStore.directory!.labels![index + 1];
+  pathStore.directory!.labels![index + 1] = temp;
+
+  for (let i = 0; i < pathStore.directory!.entries.length; i += 1) {
+    const temp = pathStore.directory!.entries[i].labels![index];
+    pathStore.directory!.entries[i].labels![index] =
+      pathStore.directory!.entries[i].labels![index + 1];
+    pathStore.directory!.entries[i].labels![index + 1] = temp;
+  }
+};
+
 const removeOption = () => {
   const labelIndex = selectedLabel.value!.id;
   const optionIndex = selectedOption.value!.id;
@@ -86,7 +120,7 @@ const applyLabelChanges = async () => {
       name: entry.file_name,
       labels: entry.labels!,
     })),
-    labels: pathStore.directory!.labels!
+    labels: pathStore.directory!.labels!,
   });
   res.match(
     (_) => {},
@@ -124,10 +158,16 @@ const applyLabelChanges = async () => {
           <Button :disabled="selectedLabel === null" @click="removeLabel">
             <span class="material-symbols-outlined">remove</span>
           </Button>
-          <Button @click="console.warn('TODO')">
+          <Button
+            :disabled="selectedLabel === null || selectedLabel.id === 0"
+            @click="moveUpLabel"
+          >
             <span class="material-symbols-outlined">arrow_upward</span>
           </Button>
-          <Button @click="console.warn('TODO')">
+          <Button
+            :disabled="selectedLabel === null || selectedLabel.id === pathStore.directory.labels!.length - 1"
+            @click="moveDownLabel"
+          >
             <span class="material-symbols-outlined">arrow_downward</span>
           </Button>
         </div>
