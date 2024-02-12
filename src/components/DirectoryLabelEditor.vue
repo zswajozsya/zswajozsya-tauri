@@ -10,7 +10,7 @@ import { usePathStore } from "../stores/path";
 import { useDialogStore } from "../stores/dialog";
 import { ref, watch } from "vue";
 import { setDir } from "../tauri";
-import { message } from "@tauri-apps/api/dialog";
+import { message, confirm } from "@tauri-apps/api/dialog";
 
 const pathStore = usePathStore();
 const dialogStore = useDialogStore();
@@ -40,8 +40,14 @@ const addLabel = () => {
   }
 };
 
-const removeLabel = () => {
+const removeLabel = async () => {
   const index = selectedLabel.value!.id;
+
+  if (pathStore.directory!.entries.some(entry => entry.labels![index].some(option => option))) {
+    const res = await confirm("Some entries are still using this label. Are you sure to delete?");
+    if (!res) return;
+  }
+
   selectedLabel.value = null;
   pathStore.directory!.labels!.splice(index, 1);
   for (let i = 0; i < pathStore.directory!.entries.length; i += 1) {
@@ -83,9 +89,15 @@ const moveDownLabel = () => {
   }
 };
 
-const removeOption = () => {
+const removeOption = async () => {
   const labelIndex = selectedLabel.value!.id;
   const optionIndex = selectedOption.value!.id;
+
+  if (pathStore.directory!.entries.some(entry => entry.labels![labelIndex][optionIndex])) {
+    const res = await confirm("Some entries are still using this label option. Are you sure to delete?");
+    if (!res) return;
+  }
+
   selectedOption.value = null;
   pathStore.directory!.labels![labelIndex].options.splice(optionIndex, 1);
   for (let i = 0; i < pathStore.directory!.entries.length; i += 1) {
