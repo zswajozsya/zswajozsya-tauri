@@ -29,22 +29,36 @@ watch(selectedLabel, () => {
 });
 
 const addLabel = () => {
+  const newLabelId = pathStore.directory!.labels!.length;
+  const newLabelName = `New Label ${newLabelId + 1}`;
   pathStore.directory!.labels!.push({
-    name: `New Label ${pathStore.directory!.labels!.length + 1}`,
+    name: newLabelName,
     desc: "",
     color: "#ffffff",
     options: [],
   });
+
   for (let i = 0; i < pathStore.directory!.entries.length; i += 1) {
     pathStore.directory!.entries[i].labels!.push([]);
+  }
+
+  selectedLabel.value = {
+    name: newLabelName,
+    id: newLabelId
   }
 };
 
 const removeLabel = async () => {
   const index = selectedLabel.value!.id;
 
-  if (pathStore.directory!.entries.some(entry => entry.labels![index].some(option => option))) {
-    const res = await confirm("Some entries are still using this label. Are you sure to delete?");
+  if (
+    pathStore.directory!.entries.some((entry) =>
+      entry.labels![index].some((option) => option)
+    )
+  ) {
+    const res = await confirm(
+      "Some entries are still using this label. Are you sure to delete?"
+    );
     if (!res) return;
   }
 
@@ -93,8 +107,14 @@ const removeOption = async () => {
   const labelIndex = selectedLabel.value!.id;
   const optionIndex = selectedOption.value!.id;
 
-  if (pathStore.directory!.entries.some(entry => entry.labels![labelIndex][optionIndex])) {
-    const res = await confirm("Some entries are still using this label option. Are you sure to delete?");
+  if (
+    pathStore.directory!.entries.some(
+      (entry) => entry.labels![labelIndex][optionIndex]
+    )
+  ) {
+    const res = await confirm(
+      "Some entries are still using this label option. Are you sure to delete?"
+    );
     if (!res) return;
   }
 
