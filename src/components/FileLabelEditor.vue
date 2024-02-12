@@ -26,22 +26,25 @@ const selectedOptions = reactive<{
 watch(selectedLabel, (newState) => {
   if (newState === null) return;
 
+  const selectedEntry = pathStore.directory!.entries.find(
+    (entry) => entry.file_name === pathStore.selected_entry
+  )!;
+
   selectedOptions.value = pathStore
     .directory!.labels![newState.index].options.map((labelOption, index) => ({
       name: labelOption.name,
       index: index,
     }))
-    .filter(
-      (option) =>
-        pathStore.directory!.entries[pathStore.selected_entry!].labels![
-          newState.index
-        ][option.index]
-    );
+    .filter((option) => selectedEntry.labels![newState.index][option.index]);
 });
 
 // Save options selection state when it changes.
 watch(selectedOptions, async (newState) => {
-  pathStore.directory!.entries[pathStore.selected_entry!].labels![
+  const selectedEntryIndex = pathStore.directory!.entries.findIndex(
+    (entry) => entry.file_name === pathStore.selected_entry
+  )!;
+
+  pathStore.directory!.entries[selectedEntryIndex].labels![
     selectedLabel.value!.index
   ] = convertOptions(newState.value);
 
@@ -69,8 +72,11 @@ function convertOptions(
     index: number;
   }[]
 ): boolean[] {
+  const selectedEntryIndex = pathStore.directory!.entries.findIndex(
+    (entry) => entry.file_name === pathStore.selected_entry
+  );
   let optionsLength =
-    pathStore.directory!.entries[pathStore.selected_entry!].labels![
+    pathStore.directory!.entries[selectedEntryIndex].labels![
       selectedLabel.value!.index
     ].length;
 
@@ -89,7 +95,7 @@ function convertOptions(
     v-if="pathStore.selected_entry !== null"
     v-model:visible="dialogStore.isFileLabelEditorVisible"
     modal
-    :header="pathStore.directory!.entries[pathStore.selected_entry!].file_name"
+    :header="pathStore.selected_entry"
     style="width: 400px"
     class="dialog"
     @hide="selectedLabel = null"

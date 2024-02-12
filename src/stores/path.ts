@@ -10,6 +10,7 @@ type State =
       directory: null;
       selected_entry: null;
       common_paths: null;
+      filter: null;
     }
   | {
       path: string[];
@@ -17,12 +18,18 @@ type State =
         | {
             entries: GenDirEntry[];
             labels: undefined;
+            filter: undefined;
           }
         | {
             entries: ZswDirEntry[];
             labels: Label[];
+            filter: {
+              name: string,
+              desc: string,
+              index: [number, number]
+            }[];
           };
-      selected_entry: null | number;
+      selected_entry: null | string;
       common_paths: CommonPaths;
     };
 
@@ -33,6 +40,7 @@ export const usePathStore = defineStore("path", {
       directory: null,
       selected_entry: null,
       common_paths: null,
+      filter: null,
     } satisfies State as State;
   },
   actions: {
@@ -46,12 +54,24 @@ export const usePathStore = defineStore("path", {
 
       const res = await readDir(initialPage);
       this.directory = res.match(
-        (ok) => ok,
+        (ok) =>
+          ok.labels === undefined
+            ? {
+                entries: ok.entries,
+                labels: undefined,
+                filter: undefined,
+              }
+            : {
+                entries: ok.entries,
+                labels: ok.labels,
+                filter: [],
+              },
         (err) => {
           message(err, { type: "error" });
           return {
             entries: [],
             labels: undefined,
+            filter: undefined,
           };
         }
       );
@@ -62,8 +82,19 @@ export const usePathStore = defineStore("path", {
       res.match(
         (ok) => {
           this.path = parsePath(url);
-          this.directory = ok;
           this.selected_entry = null;
+          this.directory =
+            ok.labels !== undefined
+              ? {
+                  entries: ok.entries,
+                  labels: ok.labels,
+                  filter: [],
+                }
+              : {
+                  entries: ok.entries,
+                  labels: undefined,
+                  filter: undefined,
+                };
         },
         (err) => message(err, { type: "error" })
       );

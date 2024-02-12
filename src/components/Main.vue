@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { usePathStore } from "../stores/path";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import Labels from "./Labels.vue";
 import { stringifyPath, stringifySize } from "../utils";
 import { openPath } from "../tauri";
@@ -23,8 +23,8 @@ function handleEntryDoubleClick(entry: GenDirEntry | ZswDirEntry) {
   }
 }
 
-const handleClickEntry = (entry: GenDirEntry | ZswDirEntry, i: number) => {
-  pathStore.selected_entry = i;
+const handleClickEntry = (entry: GenDirEntry | ZswDirEntry) => {
+  pathStore.selected_entry = entry.file_name;
 
   if (justClickedEntry.value === entry.file_name) {
     handleEntryDoubleClick(entry);
@@ -97,6 +97,17 @@ const getEntryIcon = (entry: GenDirEntry | ZswDirEntry) => {
   }
   return "draft";
 };
+
+const entries = computed(() => {
+  if (pathStore.directory === null) return [];
+  if (pathStore.directory.labels === undefined)
+    return pathStore.directory.entries;
+  return pathStore.directory.entries.filter((entry) =>
+    pathStore.directory.filter!.every(
+      (group) => entry.labels[group.index[0]][group.index[1]]
+    )
+  );
+});
 </script>
 
 <template>
@@ -104,9 +115,9 @@ const getEntryIcon = (entry: GenDirEntry | ZswDirEntry) => {
     <div v-if="pathStore.directory === null">Loading...</div>
     <div v-else class="list">
       <div
-        v-for="(entry, i) in pathStore.directory.entries"
-        :class="`entry ${pathStore.selected_entry === i ? 'selected' : ''}`"
-        @click="handleClickEntry(entry, i)"
+        v-for="entry in entries"
+        :class="`entry ${pathStore.selected_entry === entry.file_name ? 'selected' : ''}`"
+        @click="handleClickEntry(entry)"
         :title="entry.file_name"
       >
         <div class="line1">
