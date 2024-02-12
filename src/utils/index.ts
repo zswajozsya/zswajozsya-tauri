@@ -7,12 +7,15 @@ export function parsePath(path: string): string[] {
   return splittedPath;
 }
 
-export function stringifyPath(path: string[]): string {
+export function stringifyPath(
+  path: string[],
+  fileType: "Dir" | "File"
+): string {
   return path[0] === ""
     ? // Unix
-      `${path.join("/")}/`
+      path.join("/") + (fileType === "Dir" ? "/" : "")
     : // Windows
-      `${path.join("\\")}\\`;
+      path.join("\\") + (fileType === "Dir" ? "\\" : "");
 }
 
 export function stringifySize(size: number): string {

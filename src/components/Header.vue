@@ -41,14 +41,14 @@ window.addEventListener('mousedown', (e) => {
       <Breadcrumb
         :home="{
           label: pathStore.path![0],
-          command: () => pathStore.goTo(stringifyPath(pathStore.path!.slice(0, 1)))
+          command: () => pathStore.goTo(stringifyPath(pathStore.path!.slice(0, 1), 'Dir'))
         }"
         :model="pathStore
           .path!
           .slice(1, pathStore.path.length)
           .map((p, i) => ({
             label: p,
-            command: () => pathStore.goTo(stringifyPath(pathStore.path!.slice(0, i + 2)))
+            command: () => pathStore.goTo(stringifyPath(pathStore.path!.slice(0, i + 2), 'Dir'))
           }))"
       >
       </Breadcrumb>

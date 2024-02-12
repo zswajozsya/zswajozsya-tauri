@@ -15,10 +15,11 @@ const justClickedEntry = ref<string | null>(null);
 
 function handleEntryDoubleClick(entry: GenDirEntry | ZswDirEntry) {
   const newPath = [...pathStore.path!, entry.file_name];
-  const newPathStr = stringifyPath(newPath);
   if (entry.file_type === "Dir") {
+    const newPathStr = stringifyPath(newPath, "Dir");
     pathStore.goTo(newPathStr);
   } else {
+    const newPathStr = stringifyPath(newPath, "File");
     openPath(newPathStr);
   }
 }
@@ -116,9 +117,16 @@ const entries = computed(() => {
     <div v-else class="list">
       <div
         v-for="entry in entries"
-        :class="`entry ${pathStore.selected_entry === entry.file_name ? 'selected' : ''}`"
+        :class="`entry ${
+          pathStore.selected_entry === entry.file_name ? 'selected' : ''
+        }`"
         @click="handleClickEntry(entry)"
         :title="entry.file_name"
+        draggable="true"
+        @dragstart="(e) => e.dataTransfer!.setData(
+          'text',
+          stringifyPath([...pathStore.path!, entry.file_name], entry.file_type)
+        )"
       >
         <div class="line1">
           <span class="icon material-symbols-outlined">

@@ -103,7 +103,7 @@ export const usePathStore = defineStore("path", {
     async goUp() {
       if (this.path === null) return;
       const newPath = this.path.slice(0, this.path.length - 1);
-      const newUrl = stringifyPath(newPath);
+      const newUrl = stringifyPath(newPath, 'Dir');
       this.goTo(newUrl);
     },
   },
@@ -116,7 +116,7 @@ export const usePathStore = defineStore("path", {
     },
     pathString: (state) => {
       if (state.path === null) return null;
-      return stringifyPath(state.path);
+      return stringifyPath(state.path, 'Dir');
     },
   },
 });
