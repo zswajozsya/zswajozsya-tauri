@@ -94,24 +94,28 @@ const removeOption = () => {
 };
 
 const addOption = () => {
-  pathStore.directory!.labels![selectedLabel.value!.id].options.push({
-    name: `New Option ${
-      pathStore.directory!.labels![selectedLabel.value!.id].options.length + 1
-    }`,
+  const options = pathStore.directory!.labels![selectedLabel.value!.id].options;
+
+  const newOptionId = options.length;
+  const newOptionName = `New Option ${newOptionId + 1}`;
+  options.push({
+    name: newOptionName,
     desc: "",
   });
+
   for (let i = 0; i < pathStore.directory!.entries.length; i += 1) {
-    if (
-      pathStore.directory!.entries[i].labels![selectedLabel.value!.id] ===
-      undefined
-    ) {
-      pathStore.directory!.entries[i].labels![selectedLabel.value!.id] = [];
+    const labels = pathStore.directory!.entries[i].labels!;
+    if (labels[selectedLabel.value!.id] === undefined) {
+      labels[selectedLabel.value!.id] = [];
     } else {
-      pathStore.directory!.entries[i].labels![selectedLabel.value!.id].push(
-        false
-      );
+      labels[selectedLabel.value!.id].push(false);
     }
   }
+
+  selectedOption.value = {
+    name: newOptionName,
+    id: newOptionId,
+  };
 };
 
 const applyLabelChanges = async () => {
